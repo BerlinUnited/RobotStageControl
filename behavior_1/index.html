@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- <link rel="icon" href="../../favicon.ico"> -->
+    <link rel="canonical" href=".">
+
+    <title>Robot Stage Control</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="lib/bootstrap-3.4.1/css/bootstrap.min.css" >
+    <!--<link rel="stylesheet" href="./lib/bootstrap-3.4.1/css/bootstrap-theme.min.css" > -->
+    
+    <script src="future-fortune.js"></script>
+    <!-- Optional Bootstrap Theme -->
+    
+    <script src="lib/JoystickController/JoystickController.js"></script>
+  </head>
+
+  <script>
+    //const peerConnection = new RTCPeerConnection();
+  
+    var buttons = [];
+    
+    function makeExecuteActionsFunction(e) {
+      return function() {
+        // disable buttons
+        buttons.forEach((b) => { b.addClass("disabled"); });
+      
+        // call all action
+        for(a of e['actions']) {
+          send(a['service'], a['call'], function(result){
+            //console.log(result);
+            buttons.forEach((b) => { b.removeClass("disabled"); });
+          })
+        }
+        
+        // this prevents the page to scrolling when clicked
+        return false;
+      }
+    }
+    
+    function loadHeader(data) {
+      var navbar = $("#navbar-right");
+        
+      for(var e of data) {
+        var anchor = $('<a class="btn btn-default" href="#">' + e['title'] + '</a>').click( 
+          makeExecuteActionsFunction(e) 
+        );
+        
+        // collect buttons
+        buttons.push(anchor);
+        
+        var item = $('<li style="padding-right:1em;"></li>').append(anchor);
+        navbar.append(item);
+      }
+    }
+    
+    var scene_number = 1;
+    function loadScene(data) {
+      var scene_id = "scene" + (scene_number++);
+      
+      var html = '<div class="col-md-12"> \
+        <div class="panel panel-primary"> \
+          <div class="panel-heading">' + data['title'] + '</div> \
+          <div class="panel-body" style="max-height: 30em; overflow-y: auto;"> \
+            <ul class="list-group" id="' + scene_id + '"><ul> \
+          </div> \
+          <div class="panel-footer"> \
+            <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="behavior_stop(); return false"> \
+              <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP LAST BEHAVIOR \
+            </a></p> \
+          </div> \
+        </div> \
+      </div> \
+      ';
+      
+      var container = $("#container");
+      container.append(html);
+    
+      var scene = $("#" + scene_id);
+      for(var e of data['items']) {
+        var anchor = $('<a class="btn btn-default" href="#"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + '</a>').click( 
+          makeExecuteActionsFunction(e) 
+        );
+        
+        // collect buttons
+        buttons.push(anchor);
+        
+        var item = $('<li class="list-group-item"></li>').append(anchor);
+        scene.append(item);
+      }
+    
+      console.log(data);
+    }
+    
+    function loadPageFromJson(data) {
+      console.log(data);
+      
+      loadHeader(data['header']);
+      
+      for(var s of data['scenes']) {
+        loadScene(s);
+      }
+    }
+  </script>
+  
+  
+  <script>
+    // hack:
+    var last_behavior = '';
+  
+    function init() {
+      // initialize the page content from a json file
+      loadPageFromJson(pageData);
+    }
+    
+    // runBehavior
+    function behavior(path) { 
+      behavior_stop(last_behavior);
+      send("ALBehaviorManager", ["startBehavior", path]); 
+      last_behavior = path; 
+    }
+    
+    function behavior_stop(path) { 
+      if(path == null) {
+        path = last_behavior;
+      }
+      send("ALBehaviorManager", ["stopBehavior", path]); 
+    }
+    
+    // say
+    // NOTE: pCall - is an asynchroneous (non blocking) call
+    function say(message) { send("ALTextToSpeech", ["pCall", "say", message]); }
+    function say_animated(message) { send("ALAnimatedSpeech", ["pCall", "say", message, "{\"speakingMovementMode\":contextual}"]); }
+    function say_stop(message) { send("ALTextToSpeech", ["stopAll"]); }
+    
+    function send(proxy, call, handler) {
+      var xhr = new XMLHttpRequest();
+
+      var data = JSON.stringify({
+        "proxy": proxy,
+        "call": call
+      });
+      console.log(data);
+      
+      xhr.open("POST", "naoqi", true);
+      
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            console.log(xhr.responseText);
+            
+            if(typeof handler !== "undefined") {
+              handler(xhr.responseText);
+            }
+          } else {
+            console.error(xhr.statusText);
+          }
+        }
+      };
+      
+      xhr.onerror = function (e) {
+        console.error(xhr.statusText);
+      };
+      
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(data); 
+    }
+    </script>
+    
+    <style>
+    </style>
+  
+  <body onload="init()">
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Future Fortune Stage Control</a>
+        </div>
+        
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="navbar-left" class="nav navbar-nav">
+            <!--<li class="active"><a href="#">Home</a></li>-->
+          </ul>
+          
+          <ul id="navbar-right" class="nav navbar-nav navbar-right">
+            <!--<li><a href="#" onclick="auto_mode('MoveContextually'); say('MoveContextually'); return false">MoveContextually</a></li>-->
+          </ul>
+          
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    
+    
+    <div class="container-fluid">
+    
+      <div class="page-header">
+        <h1></h1>
+      </div>
+      
+      <div class="row">
+      
+        <div class="col-md-6">
+          <div id="container" class="row">
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="fixed-bottom">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Move</div>
+                <div class="panel-body" style="max-height: 30em; overflow-y: auto;">
+                  
+                  <div id="status1">Joystick: </div>
+                  
+                  <div style="border: 0px solid red; width: 128px; position: fixed; bottom: 50px; right: 50px;">
+                    <img src="lib/JoystickController/images/joystick-base.png"/>
+                    <div id="stick1" style="position: absolute; left:32px; top:32px;">
+                      <img src="lib/JoystickController/images/joystick-red.png"/>		
+                    </div>
+                  </div>
+                  
+                </div>
+              </div>
+          </div>
+        </div>
+      
+      </div><!-- /.row -->
+      
+    </div><!-- /.container -->
+    
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./lib/jquery-3.5.1.slim.min.js"></script>
+    <!--<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>-->
+    <script src="./lib/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+    
+    <script>
+      // joystick
+      let joystick1 = new JoystickController("stick1", 64, 8);
+      
+      function update()
+      {
+        if( joystick1.active ) {
+          document.getElementById("status1").innerText = "Joystick 1: " + JSON.stringify(joystick1.value);
+          send("ALMotion", ["moveToward", joystick1.value['y'], 0.0, -joystick1.value['x']]);
+        }
+      }
+      
+      // hack, make better
+      function stop()
+      {
+        if( !joystick1.active ) {
+          send("ALMotion", ["moveToward", joystick1.value['y'], 0.0, -joystick1.value['x']]);
+        }
+      }
+      
+      // read values
+      setInterval(update, 100);
+      setInterval(stop, 1000);
+      
+    </script>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package uuid="remote-server" version="0.0.1">
+ <names>
+  <name lang="en_US">RemoteServer</name>
+ </names>
+ <descriptionLanguages>
+  <language>en_US</language>
+ </descriptionLanguages>
+ <contents>
+  <behaviorContent path="behavior_1">
+   <userRequestable/>
+   <nature>interactive</nature>
+   <permissions/>
+  </behaviorContent>
+ </contents>
+</package>
