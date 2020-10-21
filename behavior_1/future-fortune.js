@@ -3,10 +3,13 @@ pageData =
 {
 	"note":"header kann auch gerne hardcoded sein; type ist in jedem Array der gleiche, der kann im Zweifel auch weggelassen werden",
 	"header":[
-		{"type":"button", "title":"Head left", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadLeft"]}]},
-		{"type":"button", "title":"Head right", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadRight"]}]},
-		{"type":"button", "title":"Head center", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHead"]}]},
-		{"type":"button", "title":"start BasicAwareness", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/reanableBasicAwareness"]}]}
+		{"type":"non-blocking", "title":"Head left", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadLeft"]}]},
+		{"type":"non-blocking", "title":"Head right", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadRight"]}]},
+		{"type":"non-blocking", "title":"Head center", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHead"]}]},
+		{"type":"non-blocking", "title":"start BasicAwareness", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/reanableBasicAwareness"]}]},
+		{"type":"non-blocking", "title":"stop BasicAwareness", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/stopBasicAwareness"]}]},
+		{"type":"non-blocking", "title":"Sound On", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOn"]}]},
+		{"type":"non-blocking", "title":"Sound Off", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOff"]}]}
 	],
 	"scenes":[
 		{"type":"headline", "title":"2 R.U.R.", "items":[
@@ -209,8 +212,65 @@ pageData =
 		},
 		{"type":"headline", "title":"8 Friendship Ritual", "items":[
 				{"type":"button", "title":"8.1 Friendship Ritual", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_friendship/behavior_1)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
 				]}
+			]
+		},
+		{"type":"headline", "title":"9 Quiz", "items":[
+				{"type":"button", "title":"9 A Correct", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
+				]},
+				{"type":"button", "title":"9 B Correct", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
+				]},
+				{"type":"button", "title":"9 C Correct", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
+				]},
+				{"type":"button", "title":"9 D Correct", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
+				]},
+				{"type":"button", "title":"9 Picture D Correct", "actions":[
+					{"service":"ALTabletService", "call":["showImage","D.png"]}
+				]}
+			]
+		},
+		{"type":"headline", "title":"10 5th Element", "items":[
+				{"type":"button", "title":"10.1 5th Element - LIGHT", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
+				]},
+				{"type":"button", "title":"10.2 5th Element - MYSTIC", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
+				]},
+				{"type":"button", "title":"10.3 5th Element - LOW5", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
+				]},
+				{"type":"button", "title":"10.4 5th Element - RITUAL", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
+				]}
+			]
+		},
+		{"type":"headline", "title":"Animations", "items":[
+				{"type":"non-blocking", "title":"knight", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/Knight_1"]}]},
+				{"type":"non-blocking", "title":"led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
+				{"type":"non-blocking", "title":"Wings_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Wings_1"]}]},
+				{"type":"non-blocking", "title":"Wings_3", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Wings_3"]}]},
+				{"type":"non-blocking", "title":"MysticalPower_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/MysticalPower_1"]}]},
+				{"type":"non-blocking", "title":"Relaxation_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/Relaxation_2"]}]},
+				{"type":"non-blocking", "title":"ShowMuscles_3", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/ShowMuscles_3"]}]},
+				{"type":"non-blocking", "title":"ShowSky_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/ShowSky_1"]}]},
+				{"type":"non-blocking", "title":"Stretch_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/Stretch_2"]}]},
+				{"type":"non-blocking", "title":"ShakeBody_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/ShakeBody_2"]}]},
+				{"type":"non-blocking", "title":"SeeColor_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/SeeColor_1"]}]},
+				{"type":"non-blocking", "title":"LightShine_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/LightShine_1"]}]},
+				{"type":"non-blocking", "title":"WhatSThis_6", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/WhatSThis_6"]}]},
+				{"type":"non-blocking", "title":"YouKnowWhat_4", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/YouKnowWhat_4"]}]},
+				{"type":"non-blocking", "title":"YouKnowWhat_5", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/YouKnowWhat_5"]}]},
+				{"type":"non-blocking", "title":"You_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/You_2"]}]},
+				{"type":"non-blocking", "title":"EthernetOn_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/EthernetOn_1"]}]},
+				{"type":"non-blocking", "title":"Hey_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_2"]}]},
+				{"type":"non-blocking", "title":"Hey_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_1"]}]},
+				{"type":"non-blocking", "title":"ThinkingLoop_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_1"]}]},
+				{"type":"non-blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_2"]}]}
 			]
 		}
 	]
