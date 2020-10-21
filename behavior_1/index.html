@@ -85,11 +85,12 @@
     
     
     function loadScene(data) {
+      // style="max-height: 30em; overflow-y: auto;"
       var sceneHtml = 
         '<div class="col-md-12"> \
           <div class="panel panel-primary"> \
             <div class="panel-heading"><strong>{{title}}</strong></div> \
-            <div class="panel-body" style="max-height: 30em; overflow-y: auto;"> \
+            <div class="panel-body"> \
             </div> \
             <div class="panel-footer"> \
               <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="behavior_stop(); return false"> \
@@ -256,18 +257,17 @@
       
       <div class="row">
       
-        <div class="col-md-6">
+        <div class="col-md-6" style="height: 80%; overflow-y: auto;">
           <div id="container" class="row">
             
           </div>
         </div>
         
-        
         <!-- animations -->
         <div class="col-md-6">
           <div class="panel panel-primary">
             <div class="panel-heading">Animations</div>
-            <div class="panel-body" style="max-height: 30em; overflow-y: auto;">
+            <div class="panel-body" style="max-height: 50%; overflow-y: auto;">
               <ul class="list-group" id="animations"><ul>
             </div>
             <div class="panel-footer">
