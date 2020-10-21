@@ -24,10 +24,8 @@
         <File name="bootstrap.min" src="behavior_1/lib/bootstrap-3.4.1/js/bootstrap.min.js" />
         <File name="npm" src="behavior_1/lib/bootstrap-3.4.1/js/npm.js" />
         <File name="jquery-3.5.1.slim.min" src="behavior_1/lib/jquery-3.5.1.slim.min.js" />
-        <File name="stage" src="behavior_1/stage.html" />
         <File name="NaoQIServer" src="behavior_1/NaoQIServer.py" />
         <File name="future-fortune" src="behavior_1/future-fortune.js" />
-        <File name="HTML-Joysticks-master" src="behavior_1/lib/HTML-Joysticks-master.zip" />
         <File name="JoystickController" src="behavior_1/lib/JoystickController/JoystickController.js" />
         <File name="LICENSE" src="behavior_1/lib/JoystickController/LICENSE" />
         <File name="README" src="behavior_1/lib/JoystickController/README.md" />
@@ -39,6 +37,22 @@
         <File name="index" src="behavior_1/lib/JoystickController/index.html" />
         <File name="joy" src="behavior_1/lib/joy/joy.html" />
         <File name="joy" src="behavior_1/lib/joy/joy.js" />
+        <File name="test" src="behavior_1/test.html" />
+        <File name="black" src="behavior_1/black.jpg" />
+        <File name="blue" src="behavior_1/blue.jpg" />
+        <File name="colors" src="behavior_1/colors.gif" />
+        <File name="dark_red" src="behavior_1/dark_red.jpg" />
+        <File name="green" src="behavior_1/green.jpg" />
+        <File name="lavender" src="behavior_1/lavender.jpg" />
+        <File name="light_blue" src="behavior_1/light_blue.jpg" />
+        <File name="light_green" src="behavior_1/light_green.jpg" />
+        <File name="light_orange" src="behavior_1/light_orange.jpg" />
+        <File name="orange" src="behavior_1/orange.jpg" />
+        <File name="pink" src="behavior_1/pink.jpg" />
+        <File name="purple" src="behavior_1/purple.jpg" />
+        <File name="red" src="behavior_1/red.jpg" />
+        <File name="white" src="behavior_1/white.jpg" />
+        <File name="yellow" src="behavior_1/yellow.jpg" />
     </Resources>
     <Topics />
     <IgnoredPaths />
