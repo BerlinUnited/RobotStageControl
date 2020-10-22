@@ -85,11 +85,12 @@
     
     
     function loadScene(data) {
+      // style="max-height: 30em; overflow-y: auto;"
       var sceneHtml = 
         '<div class="col-md-12"> \
           <div class="panel panel-primary"> \
             <div class="panel-heading"><strong>{{title}}</strong></div> \
-            <div class="panel-body" style="max-height: 30em; overflow-y: auto;"> \
+            <div class="panel-body"> \
             </div> \
             <div class="panel-footer"> \
               <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="behavior_stop(); return false"> \
@@ -126,6 +127,28 @@
       loadHeader(data['header']);
       
       data['scenes'].forEach(loadScene);
+    }
+    
+    function loadAnimations() {
+      send("ALBehaviorManager", ["getInstalledBehaviors"], function(data) 
+      {
+        var s = "{'data':" + data + "}";
+        const searchRegExp = new RegExp("'", 'g');
+        s = s.replace(searchRegExp,"\"");
+        console.log(s);
+        var obj = JSON.parse(s);
+        console.log(obj);
+        
+        var animations = $("#animations");
+        for(a of obj['data']) {
+          if(a.startsWith('animations')) {
+            // remove 'animations/' at the beginning
+            a = a.substring('animations'.length+1);
+            var item = '<li class="list-group-item"><a class="btn btn-default" href="#" onclick="behavior(\'' + a + '\'); return false"><span class="glyphicon glyphicon-play"></span> ' + a +'</a></li>';
+            animations.append(item)
+          } 
+        }
+      });
     }
   </script>
   
@@ -234,12 +257,28 @@
       
       <div class="row">
       
-        <div class="col-md-6">
+        <div class="col-md-6" style="height: 80%; overflow-y: auto;">
           <div id="container" class="row">
             
           </div>
         </div>
         
+        <!-- animations -->
+        <div class="col-md-6">
+          <div class="panel panel-primary">
+            <div class="panel-heading">Animations</div>
+            <div class="panel-body" style="max-height: 50%; overflow-y: auto;">
+              <ul class="list-group" id="animations"><ul>
+            </div>
+            <div class="panel-footer">
+              <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="behavior_stop(); return false">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP LAST BEHAVIOR
+              </a></p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Move -->
         <div class="col-md-6">
           <div class="fixed-bottom">
             <div class="panel panel-primary">
