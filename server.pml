@@ -6,6 +6,7 @@
     </BehaviorDescriptions>
     <Dialogs>
         <Dialog name="ExampleDialog" src="behavior_1/ExampleDialog/ExampleDialog.dlg" />
+        <Dialog name="empty" src="empty/empty.dlg" />
     </Dialogs>
     <Resources>
         <File name="index" src="behavior_1/index.html" />
@@ -58,6 +59,10 @@
     </Resources>
     <Topics>
         <Topic name="ExampleDialog_enu" src="behavior_1/ExampleDialog/ExampleDialog_enu.top" topicName="ExampleDialog" language="en_US" />
+        <Topic name="empty_enu" src="empty/empty_enu.top" topicName="empty" language="en_US" />
     </Topics>
     <IgnoredPaths />
+    <Translations auto-fill="en_US">
+        <Translation name="translation_en_US" src="translations/translation_en_US.ts" language="en_US" />
+    </Translations>
 </Package>

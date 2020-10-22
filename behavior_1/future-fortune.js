@@ -20,11 +20,11 @@ pageData =
 					{"service":"ALTabletService", "call":["showImage","img/black.jpg"]},
 					{"service":"ALAnimatedSpeech", "call":["say"," \\vct=60\\ \\rspd=90\\ Send me to the stamping mill!"]}
 				]},
-				{"type":"button", "title":"2.3 R.U.R. Path 2", "actions":[
+				{"type":"button", "title":"2.3.1 R.U.R. Path 2", "actions":[
 					{"service":"ALTabletService", "call":["showImage","img/black.jpg"]},
 					{"service":"ALAnimatedSpeech", "call":["say","^run(rur_behaviors/path_2)"]}
 				]},
-				{"type":"button", "title":"2.4 R.U.R.", "actions":[
+				{"type":"button", "title":"2.3.2 R.U.R.", "actions":[
 					{"service":"ALTabletService", "call":["showImage","img/black.jpg"]},
 					{"service":"ALAnimatedSpeech", "call":["say","\\vct=60\\ \\rspd=90\\ \\wait=6\\ I won't work for you.  Put me into the stamping mill!"]}
 				]},
@@ -106,7 +106,11 @@ pageData =
 			]
 		},
 		{"type":"headline", "title":"4 Dance", "items":[
-				{"type":"button", "title":"4 Dance", "actions":[
+				{"type":"button", "title":"4.1 Dance Speaking Motion", "actions":[
+					{"service":"ALTabletService", "call":["showImage","img/black.jpg"]},
+					{"service":"ALAnimatedSpeech", "call":["say","\\wait=60000\\ "]}
+				]},
+				{"type":"button", "title":"4.2 Dance", "actions":[
 					{"service":"ALTabletService", "call":["showImage","img/black.jpg"]},
 					{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/Bandmaster_1) ^run(animations/Stand/Gestures/Wings_3) ^run(animations/Stand/Reactions/SeeColor_3) ^run(animations/Stand/Waiting/MysticalPower_1) ^run(animations/Stand/Waiting/Relaxation_1)\n^run(theaterhelpers/Dance/arcadia_dance)\n^run(theaterhelpers/Dance/abbronza_dance)\n^run(animations/Stand/Waiting/ShowMuscles_3)\n^run(animations/Stand/Waiting/Bandmaster_1) ^run(animations/Stand/Waiting/MysticalPower_1)\n ^run(animations/Stand/Gestures/BowShort_1)"]}
 				]}
@@ -246,6 +250,10 @@ pageData =
 				]},
 				{"type":"button", "title":"10.4 5th Element - RITUAL", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
+				]},
+				{"type":"button", "title":"10.5 5th Element - Speaking Motion", "actions":[
+					{"service":"ALTabletService", "call":["showImage","img/black.jpg"]},
+					{"service":"ALAnimatedSpeech", "call":["say","\\wait=60000\\ "]}
 				]}
 			]
 		},
@@ -270,7 +278,8 @@ pageData =
 				{"type":"blocking", "title":"Hey_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_2"]}]},
 				{"type":"blocking", "title":"Hey_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_1"]}]},
 				{"type":"blocking", "title":"ThinkingLoop_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_1"]}]},
-				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_2"]}]}
+				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_2"]}]},
+				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","\\wait=60000\\ "]}]}
 			]
 		}
 	]
