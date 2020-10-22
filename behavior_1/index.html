@@ -255,6 +255,10 @@
       
       xhr.onerror = function (e) {
         console.error(xhr.statusText);
+        // also call the handler in case of error
+        if(typeof handler !== "undefined") {
+          handler(xhr.statusText);
+        }
       };
       
       xhr.setRequestHeader("Content-Type", "application/json");
@@ -305,9 +309,9 @@
       ['MaxVelTheta', 1.0], 
       ['MaxAccXY', 0.55], 
       ['MaxAccTheta', 3.0], 
-      ['MaxJerkXY', 3.0], // 5.0 
+      ['MaxJerkXY', 1.0], // 5.0 
       ['MaxJerkTheta', 50.0], 
-      ['TorsoWy', 0.17]
+      ['TorsoWy', 0.0] // 0.17
     ];
     
     window.addEventListener("keydown", function(e) {
@@ -343,12 +347,20 @@
     
     var moveState = 0;
     var lastMoveState = 0;
+    var timeStampLastMoveCommand = 0;
+    var lastCommandDone = true;
     
     function sendMotionCommand() {
       var move_x = up * speedForward - down * speedBackward;
       var move_y = l * speedStrave - r * speedStrave;
       var move_r = left * speedTurn - right * speedTurn;
-      send("ALMotion", ["moveToward", move_x, move_y, move_r, motionConfig]);
+      
+      lastCommandDone = false;
+      send("ALMotion", ["moveToward", move_x, move_y, move_r, motionConfig], (e) => {lastCommandDone=true;} );
+    }
+    
+    function getTime() {
+      return performance.now();
     }
     
     function processMove() {
@@ -356,7 +368,12 @@
       moveState = left | 2*right | 4*up | 8*down | 16*l | 32*r;
       //console.log(moveState);
       
-      if(moveState != lastMoveState) {
+      if(
+        (moveState != lastMoveState && (moveState > 0 || lastCommandDone)) || 
+        (moveState > 0 && getTime() > timeStampLastMoveCommand + 1000)) // resend
+      {
+        console.log(timeStampLastMoveCommand);
+        timeStampLastMoveCommand = getTime();
         sendMotionCommand();
       }
       /*
