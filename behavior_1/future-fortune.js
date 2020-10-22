@@ -259,7 +259,8 @@ pageData =
 		},
 		{"type":"headline", "title":"Animations", "items":[
 				{"type":"blocking", "title":"knight", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/Knight_1"]}]},
-				{"type":"blocking", "title":"led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
+				{"type":"blocking", "title":"start led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
+				{"type":"blocking", "title":"stop led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["stopBehavior","animations/LED/CircleEyes"]}]},
 				{"type":"blocking", "title":"Wings_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Wings_1"]}]},
 				{"type":"blocking", "title":"Wings_3", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Wings_3"]}]},
 				{"type":"blocking", "title":"MysticalPower_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/MysticalPower_1"]}]},
@@ -277,8 +278,8 @@ pageData =
 				{"type":"blocking", "title":"EthernetOn_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/EthernetOn_1"]}]},
 				{"type":"blocking", "title":"Hey_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_2"]}]},
 				{"type":"blocking", "title":"Hey_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_1"]}]},
-				{"type":"blocking", "title":"ThinkingLoop_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_1"]}]},
-				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_2"]}]},
+				{"type":"blocking", "title":"ThinkingLoop_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/BodyTalk/Thinking/ThinkingLoop_1)"]}]},
+				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/BodyTalk/Thinking/ThinkingLoop_2)"]}]},
 				{"type":"blocking", "title":"Speaking Motion", "actions":[{"service":"ALAnimatedSpeech", "call":["say","\\wait=60000\\ "]}]}
 			]
 		}
