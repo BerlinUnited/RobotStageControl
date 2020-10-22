@@ -38,21 +38,21 @@
         <File name="joy" src="behavior_1/lib/joy/joy.html" />
         <File name="joy" src="behavior_1/lib/joy/joy.js" />
         <File name="test" src="behavior_1/test.html" />
-        <File name="black" src="behavior_1/black.jpg" />
-        <File name="blue" src="behavior_1/blue.jpg" />
-        <File name="colors" src="behavior_1/colors.gif" />
-        <File name="dark_red" src="behavior_1/dark_red.jpg" />
-        <File name="green" src="behavior_1/green.jpg" />
-        <File name="lavender" src="behavior_1/lavender.jpg" />
-        <File name="light_blue" src="behavior_1/light_blue.jpg" />
-        <File name="light_green" src="behavior_1/light_green.jpg" />
-        <File name="light_orange" src="behavior_1/light_orange.jpg" />
-        <File name="orange" src="behavior_1/orange.jpg" />
-        <File name="pink" src="behavior_1/pink.jpg" />
-        <File name="purple" src="behavior_1/purple.jpg" />
-        <File name="red" src="behavior_1/red.jpg" />
-        <File name="white" src="behavior_1/white.jpg" />
-        <File name="yellow" src="behavior_1/yellow.jpg" />
+        <File name="black" src="behavior_1/img/black.jpg" />
+        <File name="blue" src="behavior_1/img/blue.jpg" />
+        <File name="colors" src="behavior_1/img/colors.gif" />
+        <File name="dark_red" src="behavior_1/img/dark_red.jpg" />
+        <File name="green" src="behavior_1/img/green.jpg" />
+        <File name="lavender" src="behavior_1/img/lavender.jpg" />
+        <File name="light_blue" src="behavior_1/img/light_blue.jpg" />
+        <File name="light_green" src="behavior_1/img/light_green.jpg" />
+        <File name="light_orange" src="behavior_1/img/light_orange.jpg" />
+        <File name="orange" src="behavior_1/img/orange.jpg" />
+        <File name="pink" src="behavior_1/img/pink.jpg" />
+        <File name="purple" src="behavior_1/img/purple.jpg" />
+        <File name="red" src="behavior_1/img/red.jpg" />
+        <File name="white" src="behavior_1/img/white.jpg" />
+        <File name="yellow" src="behavior_1/img/yellow.jpg" />
     </Resources>
     <Topics />
     <IgnoredPaths />
