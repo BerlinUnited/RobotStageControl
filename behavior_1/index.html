@@ -319,7 +319,6 @@
     
     function doKeyDown(e)
     {
-      console.log(e);
 			if (e.keyCode == code_up)    { up    = 1; }
 			if (e.keyCode == code_down)  { down  = 1; }
       
@@ -354,9 +353,14 @@
     
     function processMove() {
       lastMoveState = moveState;
-      moveState = left + right + up + down + l + r;
+      moveState = left | 2*right | 4*up | 8*down | 16*l | 32*r;
+      //console.log(moveState);
       
-      if(moveState > 0) {
+      if(moveState != lastMoveState) {
+        sendMotionCommand();
+      }
+      /*
+      if(moveState > 0 && moveState != lastMoveState) {
         //console.log([left, right, up, down, l, r]);
         sendMotionCommand();
       } else if(lastMoveState > 0) {
@@ -364,6 +368,7 @@
         //console.log([left, right, up, down, l, r]);
         sendMotionCommand();
       }
+      */
     }
     
     setInterval(processMove, 100);
