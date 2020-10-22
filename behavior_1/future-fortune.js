@@ -179,7 +179,7 @@ pageData =
 				]},
 				{"type":"button", "title":"5.16 Monologue Show Soul", "actions":[
 					{"service":"ALTabletService", "call":["showImage","img/colors.gif"]},
-					{"service":"ALAnimatedSpeech", "call":["say","^run(Stand/Gestures/ShowTablet_1)\n^run(ht_animation_lib/show_left)\n^run(ht_animation_lib/show_right)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^run(Stand/Gestures/ShowTablet_1)\n^run(theaterhelpers/presentLeft)\n^run(theaterhelpers/presentRight)"]}
 				]},
 				{"type":"button", "title":"5.17 Monologue Protect your Soul", "actions":[
 					{"service":"ALTabletService", "call":["showImage","img/colors.gif"]},
