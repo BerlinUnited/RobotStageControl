@@ -279,7 +279,7 @@ pageData =
 				{"type":"blocking", "title":"Hey_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_1"]}]},
 				{"type":"blocking", "title":"ThinkingLoop_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_1"]}]},
 				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/BodyTalk/Thinking/ThinkingLoop_2"]}]},
-				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","\\wait=60000\\ "]}]}
+				{"type":"blocking", "title":"Speaking Motion", "actions":[{"service":"ALAnimatedSpeech", "call":["say","\\wait=60000\\ "]}]}
 			]
 		}
 	]
