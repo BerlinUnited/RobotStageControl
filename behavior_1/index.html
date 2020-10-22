@@ -281,6 +281,27 @@
     var speedStrave   = 1.0;
     var speedTurn     = 1.0;
     
+    /*
+    var motionConfig = [
+      ['MaxVelXY', 0.4], 
+      ['MaxVelTheta', 1.0], 
+      ['MaxAccXY', 0.45], 
+      ['MaxAccTheta', 2.0], 
+      ['MaxJerkXY', 3.0], 
+      ['MaxJerkTheta', 20.0], 
+      ['TorsoWy', 0.1]
+    ];*/
+    
+    var motionConfig = [
+      ['MaxVelXY', 0.4], 
+      ['MaxVelTheta', 1.0], 
+      ['MaxAccXY', 0.55], 
+      ['MaxAccTheta', 3.0], 
+      ['MaxJerkXY', 5.0], 
+      ['MaxJerkTheta', 50.0], 
+      ['TorsoWy', 0.17]
+    ];
+    
     window.addEventListener("keydown", function(e) {
         // space and arrow keys
         if([code_left, code_right, code_up, code_down, code_l, code_r].indexOf(e.keyCode) > -1) {
@@ -320,7 +341,7 @@
       var move_x = up * speedForward - down * speedBackward;
       var move_y = l * speedStrave - r * speedStrave;
       var move_r = left * speedTurn - right * speedTurn;
-      send("ALMotion", ["moveToward", move_x, move_y, move_r]);
+      send("ALMotion", ["moveToward", move_x, move_y, move_r, motionConfig]);
     }
     
     function processMove() {
@@ -386,7 +407,7 @@
         
         <!-- animations -->
         <div class="col-md-6">
-          <div id="panel-animations" class="panel panel-primary">
+          <div id="panel-animations" class="panel panel-success">
             <div class="panel-heading">Animations</div>
             <div class="panel-body" style="max-height: 50%; overflow-y: auto;" id="animations">
               <!--<ul class="list-group" id="animations"><ul>-->
