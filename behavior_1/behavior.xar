@@ -28,18 +28,16 @@ def print_methods(o):
   object_methods = [method_name for method_name in dir(o) if callable(getattr(o, method_name))]
   print(object_methods)
 
-# global state
-module = None
-services = {}
+# global
+naoqi = None
 
 class NaoQIManager:
-    def __init__(self):
+    def __init__(self, session):
+      self.session = session
+      self.services = {}
 
-      global services
-      self.services = services
-
-      if HAS_NAOQI:
-        self.session = module.session()
+      #if HAS_NAOQI:
+      #  self.session = module.session()
 
       # create a connect a local session (in standalone case)
       #self.session = qi.Session()
@@ -89,14 +87,15 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
 
     def run_naoqi(self, service, call):
         # create a naoqi manager if not avaliable yet
-        if not hasattr(self, 'naoqi'):
-            self.naoqi = NaoQIManager()
+        #if not hasattr(self, 'naoqi'):
+        #    self.naoqi = NaoQIManager()
 
         # encode everything as ascii, this is crucial
         service = service.encode('ascii')
         call = [c.encode('ascii') if callable(getattr(c, 'encode', None)) else c for c in call]
 
-        return self.naoqi.call(service, call)
+        global naoqi
+        return naoqi.call(service, call)
 
 
     def do_POST(self):
@@ -137,8 +136,9 @@ class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 class MyClass(GeneratedClass):
     def __init__(self):
         GeneratedClass.__init__(self)
-        global module
-        module = self
+
+        global naoqi
+        naoqi = NaoQIManager(self.session())
 
     def onLoad(self):
         # change the working directory to the directory of the app
