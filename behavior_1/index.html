@@ -255,29 +255,41 @@
     var code_right = 39; 
     var code_down  = 40;
     
+    var code_l     = 65;
+    var code_r     = 68;
+    
     var left  = 0;
     var right = 0;
     var up    = 0;
     var down  = 0;
     
+    // L/R buttons
+    var l     = 0;
+    var r     = 0;
+    
     var speedForward  = 1.0;
     var speedBackward = 1.0;
+    var speedStrave   = 1.0;
     var speedTurn     = 1.0;
     
     window.addEventListener("keydown", function(e) {
         // space and arrow keys
-        if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        if([code_left, code_right, code_up, code_down, code_l, code_r].indexOf(e.keyCode) > -1) {
             e.preventDefault();
         }
     }, false);
     
     function doKeyDown(e)
     {
+      console.log(e);
 			if (e.keyCode == code_up)    { up    = 1; }
 			if (e.keyCode == code_down)  { down  = 1; }
       
 			if (e.keyCode == code_left)  { left  = 1; }
-			if (e.keyCode == code_right) { right = 1; }      
+			if (e.keyCode == code_right) { right = 1; }   
+
+      if (e.keyCode == code_l)     { l = 1; }
+			if (e.keyCode == code_r)     { r = 1; }        
 		}
     
     function doKeyUp(e)
@@ -286,29 +298,32 @@
 			if (e.keyCode == code_down)  { down  = 0; }
       
 			if (e.keyCode == code_left)  { left  = 0; }
-			if (e.keyCode == code_right) { right = 0; }      
+			if (e.keyCode == code_right) { right = 0; }   
+
+      if (e.keyCode == code_l)     { l = 0; }
+			if (e.keyCode == code_r)     { r = 0; } 
 		}
     
     var moveState = 0;
     var lastMoveState = 0;
     
     function sendMotionCommand() {
-      var x = up*speedForward - down*speedBackward;
-      var y = 0;
-      var r = left*speedTurn - right*speedTurn;
-      send("ALMotion", ["moveToward", x, y, r]);
+      var move_x = up * speedForward - down * speedBackward;
+      var move_y = l * speedStrave - r * speedStrave;
+      var move_r = left * speedTurn - right * speedTurn;
+      send("ALMotion", ["moveToward", move_x, move_y, move_r]);
     }
     
     function processMove() {
       lastMoveState = moveState;
-      moveState = left + right + up + down;
+      moveState = left + right + up + down + l + r;
       
       if(moveState > 0) {
-        console.log([left, right, up, down]);
+        console.log([left, right, up, down, l, r]);
         sendMotionCommand();
       } else if(lastMoveState > 0) {
         // stop
-        console.log([left, right, up, down]);
+        console.log([left, right, up, down, l, r]);
         sendMotionCommand();
       }
     }
