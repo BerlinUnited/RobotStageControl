@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Python Script" id="1" localization="8" tooltip="This box contains a basic python script and can be used to create any python script box you would like.&#x0A;&#x0A;To edit its script, double-click on it." x="325" y="143"><bitmap>media/images/box/box-python-script.png</bitmap><script language="4"><content><![CDATA[from __future__ import print_function
+<?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Python Script" id="1" localization="8" tooltip="This box contains a basic python script and can be used to create any python script box you would like.&#x0A;&#x0A;To edit its script, double-click on it." x="334" y="43"><bitmap>media/images/box/box-python-script.png</bitmap><script language="4"><content><![CDATA[from __future__ import print_function
 
 # note this for Pythong 2.7 and 3.x compatibility
 try:
@@ -163,4 +163,275 @@ class MyClass(GeneratedClass):
 
     def onInput_onStop(self):
         self.onUnload()
-        self.onStopped()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /></Box><Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box></ChoregrapheProject>
+        self.onStopped()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /></Box><Box name="Initialize Pepper" id="5" localization="8" tooltip="Enter description here" x="338" y="146"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="Wait_onStart" type="1" type_size="1" nature="2" inner="0" tooltip="This input has been automatically generated&#x0A;by converting several boxes into a single box." id="2" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram scale="84.0896"><Box name="Dialog" id="3" localization="8" tooltip="An example of multilanguage dialog implementation" x="338" y="146"><dialogFile>ExampleDialog/ExampleDialog.dlg</dialogFile><bitmap>media/images/box/box-dialog.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="playAGame" type="1" type_size="1" nature="2" inner="0" tooltip="stimulated using $playAGame=1 in qiChat script when User wants to play a game&#x0A;" id="5" /><Resource name="Speech" type="Lock" timeout="0" /><Resource name="Speech recognition" type="Lock" timeout="0" /></Box><Box name="Wait" id="6" localization="8" tooltip="Wait a moment before sending a signal on the output. &#x0A;Can be stopped anytime. &#x0A;Stimulating the input again before output is activated restarts the waiting period.&#x0A;" x="62" y="325"><bitmap>media/images/box/wait.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.waiting = None
+
+    def onUnload(self):
+        self.cancelWaiting()
+
+    def triggerOutput(self):
+        self.timerOutput()
+
+    def cancelWaiting(self):
+        if self.waiting:
+            self.waiting.cancel()
+        self.waiting = None
+
+    def onInput_onStart(self):
+        self.cancelWaiting()
+        import qi
+        self.waiting = qi.async(self.triggerOutput, delay=int(self.getParameter("Timeout (s)") * 1000 * 1000))
+
+    def onInput_onStop(self):
+        if self.getParameter("Trigger timerOutput if cancelled") and self.waiting and self.waiting.isRunning():
+            self.timerOutput()
+        self.onUnload()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Start the Wait box with the configured timeout value." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the wait and stimulate the output." id="3" /><Output name="timerOutput" type="1" type_size="1" nature="1" inner="0" tooltip="Send a bang once time set in parameters is elapsed, or if the box is stopped and the appropriate parameter is set." id="4" /><Parameter name="Timeout (s)" inherits_from_parent="0" content_type="2" value="20" default_value="1" min="0" max="5000" tooltip="Duration the box waits before stimulating the output." id="5" /><Parameter name="Trigger timerOutput if cancelled" inherits_from_parent="0" content_type="0" value="0" default_value="1" tooltip="If the box is currently waiting and cancelled, output will be stimulated." id="6" /></Box><Box name="Start Behavior" id="2" localization="0" tooltip="Starts the behavior of the name given as input." x="664" y="293"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        #~ puts code for box initialization here
+        pass
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_startBehavior(self, p):
+        bm = ALProxy("ALBehaviorManager")
+        bm.startBehavior(p)
+        self.onBehaviorStarted(p) #~ activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="startBehavior" type="3" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Output name="onBehaviorStarted" type="3" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished. Recalls the behavior name." id="3" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="Triggered if an error occurs at behavior start." id="4" /></Box><Box name="Text Edit" id="4" localization="8" tooltip="Send the text you entered when the input is stimulated." plugin="textedit_plugin" x="314" y="301"><bitmap>media/images/box/interaction/vocabulary.png</bitmap><script language="4"><content><![CDATA[# /!\ Generated content. Do not edit!
+class MyClass(GeneratedClass):
+	def __init__(self):
+		GeneratedClass.__init__(self)
+
+	def onInput_onStart(self):
+		self.onStopped("theaterhelpers/reanableBasicAwareness")]]></content></script><pluginContent><text><![CDATA[theaterhelpers/reanableBasicAwareness]]></text></pluginContent><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when Diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="1" inner="0" tooltip="To send the text on the output." id="2" /><Output name="onStopped" type="3" type_size="1" nature="2" inner="0" tooltip="The text you entered." id="3" /></Box><Box name="Head Touched" id="5" localization="8" tooltip="Subscribes to a signal on a NAOqi2 service, or an event in NAOqi&apos;s shared memory&#x0A;When subscribed, the output will be triggered every time the signal is emitted or the event is raised." x="234" y="397"><bitmap>media/images/box/sensors/STM.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        import threading
+        self.lock = threading.RLock()
+        self.signal = None
+        self.linkId = -1
+
+    def onUnload(self):
+        with self.lock:
+            self.unsubscribe()
+
+    def onInput_onStart(self):
+        with self.lock:
+            self.unsubscribe()
+            event = self.getParameter("event")
+
+            if(len(event) == 0):
+                self.onError("No event or signal given.")
+                return
+
+            params = event.split(".")
+            if(len(params) == 2):
+                try:
+                    self.signal = getattr(self.session().service(params[0]), params[1])
+                except Exception as e:
+                    mem = self.session().service("ALMemory")
+                    if(event in mem.getEventList()):
+                        self.signal = mem.subscriber(event).signal
+                    else:
+                        self.onError(event + ": no such service.signal pair found, and no such event declared in ALMemory. Aborting.")
+                        return
+            else:
+                self.signal = self.session().service("ALMemory").subscriber(event).signal
+
+            self.linkId = self.signal.connect(self.reemitSignal)
+
+    def onInput_onStop(self):
+        with self.lock:
+            self.unsubscribe()
+            self.onStopped()
+
+    def unsubscribe(self):
+        if(self.signal is not None and self.linkId != -1):
+            self.signal.disconnect(self.linkId)
+
+        del self.signal
+        self.signal = None
+        self.linkId = -1
+
+    def reemitSignal(self, *args):
+        if(len(args) == 0):
+            self.onEvent()
+        elif(len(args) == 1):
+            self.onEvent(args[0])
+        else:
+            self.onEvent(args)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is activated, the box will try to subscribe to the signal or the event passed in the box parameter.&#x0A;&#x0A;If it is retriggered and the parameter has changed, the box will undo the previous subscription and subscribe to the new signal or the new event." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the box and cancel the subscription, if any." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="This output is triggered when the box encounters an error, and contains the error message." id="5" /><Output name="onEvent" type="0" type_size="1" nature="2" inner="0" tooltip="This output is triggered each time the signal/event to which the box is connected is emitted/raised. It will carry the payload associated with the signal emission/event raise." id="6" /><Parameter name="event" inherits_from_parent="0" content_type="3" value="FrontTactilTouched" default_value="" custom_choice="0" tooltip='This parameter describes the signal to connect to, and the service advertising this signal.&#x0A;&#x0A;Use the pattern &quot;Service.Signal&quot; to connect to a signal, or the event key to connect to an event.' id="7" /></Box><Box name="Only Once" id="1" localization="8" tooltip="This box&apos;s output is stimulated only the first time the onSignal input is.&#x0A;&#x0A;Note: It is reset when the diagram containing the box is unloaded." x="542" y="412"><bitmap>media/images/box/loop.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.bFirstTime = True
+
+    def onUnload(self):
+        self.bFirstTime = True
+
+    def onInput_onSignal(self):
+        if( self.bFirstTime ):
+            self.bFirstTime = False
+            self.firstTime()
+
+    def onInput_onReset(self):
+        self.bFirstTime = True]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onSignal" type="1" type_size="1" nature="1" inner="0" tooltip="The signal that must pass only once." id="2" /><Input name="onReset" type="1" type_size="1" nature="1" inner="0" tooltip="" id="3" /><Output name="firstTime" type="1" type_size="1" nature="2" inner="0" tooltip="Signal sent first time the onSignal input is stimulated." id="4" /></Box><Box name="Text Edit (1)" id="8" localization="8" tooltip="Send the text you entered when the input is stimulated." plugin="textedit_plugin" x="690" y="413"><bitmap>media/images/box/interaction/vocabulary.png</bitmap><script language="4"><content><![CDATA[# /!\ Generated content. Do not edit!
+class MyClass(GeneratedClass):
+	def __init__(self):
+		GeneratedClass.__init__(self)
+
+	def onInput_onStart(self):
+		self.onStopped("animations/Stand/Emotions/Positive/Laugh_1")]]></content></script><pluginContent><text><![CDATA[animations/Stand/Emotions/Positive/Laugh_1]]></text></pluginContent><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when Diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="1" inner="0" tooltip="To send the text on the output." id="2" /><Output name="onStopped" type="3" type_size="1" nature="2" inner="0" tooltip="The text you entered." id="3" /></Box><Box name="Run Behavior" id="9" localization="0" tooltip="Manage a behavior.&#x0A;&#x0A;Will start the behavior given as input when onStart is stimulated.&#x0A;&#x0A;Will stop it when onStop is stimulated.&#x0A;&#x0A;Will exit on onStopped when no error happened during behavior startup or stopping.&#x0A;&#x0A;Will exit on onError if an error happened, transmitting a string describing the error.&#x0A;&#x0A;Most notably (but not exclusively), the box will fail if you try to start a behavior not present on the robot, or if you try to start a behavior that&apos;s already started.&#x0A;" x="967" y="551"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+
+    def onLoad(self):
+        self.behaviorName = str()
+        self.bm = ALProxy("ALBehaviorManager")
+
+    def onUnload(self):
+        if len(self.behaviorName) > 0:
+            self.bm.stopBehavior(self.behaviorName)
+
+    def onInput_onStart(self, p):
+        if len(self.behaviorName) > 0 and self.behaviorName != p:
+            raise RuntimeError("this box is already running another behavior")
+
+        try:
+            self.behaviorName = p
+            self.bm.runBehavior(self.behaviorName)
+        finally:
+            self.behaviorName = str()
+            self.onStopped()
+
+    def onInput_onStop(self):
+        self.onUnload()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="3" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="" id="5" /></Box><Box name="Head Touched (1)" id="7" localization="8" tooltip="Subscribes to a signal on a NAOqi2 service, or an event in NAOqi&apos;s shared memory&#x0A;When subscribed, the output will be triggered every time the signal is emitted or the event is raised." x="218" y="639"><bitmap>media/images/box/sensors/STM.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        import threading
+        self.lock = threading.RLock()
+        self.signal = None
+        self.linkId = -1
+
+    def onUnload(self):
+        with self.lock:
+            self.unsubscribe()
+
+    def onInput_onStart(self):
+        with self.lock:
+            self.unsubscribe()
+            event = self.getParameter("event")
+
+            if(len(event) == 0):
+                self.onError("No event or signal given.")
+                return
+
+            params = event.split(".")
+            if(len(params) == 2):
+                try:
+                    self.signal = getattr(self.session().service(params[0]), params[1])
+                except Exception as e:
+                    mem = self.session().service("ALMemory")
+                    if(event in mem.getEventList()):
+                        self.signal = mem.subscriber(event).signal
+                    else:
+                        self.onError(event + ": no such service.signal pair found, and no such event declared in ALMemory. Aborting.")
+                        return
+            else:
+                self.signal = self.session().service("ALMemory").subscriber(event).signal
+
+            self.linkId = self.signal.connect(self.reemitSignal)
+
+    def onInput_onStop(self):
+        with self.lock:
+            self.unsubscribe()
+            self.onStopped()
+
+    def unsubscribe(self):
+        if(self.signal is not None and self.linkId != -1):
+            self.signal.disconnect(self.linkId)
+
+        del self.signal
+        self.signal = None
+        self.linkId = -1
+
+    def reemitSignal(self, *args):
+        if(len(args) == 0):
+            self.onEvent()
+        elif(len(args) == 1):
+            self.onEvent(args[0])
+        else:
+            self.onEvent(args)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is activated, the box will try to subscribe to the signal or the event passed in the box parameter.&#x0A;&#x0A;If it is retriggered and the parameter has changed, the box will undo the previous subscription and subscribe to the new signal or the new event." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the box and cancel the subscription, if any." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="This output is triggered when the box encounters an error, and contains the error message." id="5" /><Output name="onEvent" type="0" type_size="1" nature="2" inner="0" tooltip="This output is triggered each time the signal/event to which the box is connected is emitted/raised. It will carry the payload associated with the signal emission/event raise." id="6" /><Parameter name="event" inherits_from_parent="0" content_type="3" value="RearTactilTouched" default_value="" custom_choice="0" tooltip='This parameter describes the signal to connect to, and the service advertising this signal.&#x0A;&#x0A;Use the pattern &quot;Service.Signal&quot; to connect to a signal, or the event key to connect to an event.' id="7" /></Box><Box name="Head Touched (2)" id="10" localization="8" tooltip="Subscribes to a signal on a NAOqi2 service, or an event in NAOqi&apos;s shared memory&#x0A;When subscribed, the output will be triggered every time the signal is emitted or the event is raised." x="225" y="514"><bitmap>media/images/box/sensors/STM.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        import threading
+        self.lock = threading.RLock()
+        self.signal = None
+        self.linkId = -1
+
+    def onUnload(self):
+        with self.lock:
+            self.unsubscribe()
+
+    def onInput_onStart(self):
+        with self.lock:
+            self.unsubscribe()
+            event = self.getParameter("event")
+
+            if(len(event) == 0):
+                self.onError("No event or signal given.")
+                return
+
+            params = event.split(".")
+            if(len(params) == 2):
+                try:
+                    self.signal = getattr(self.session().service(params[0]), params[1])
+                except Exception as e:
+                    mem = self.session().service("ALMemory")
+                    if(event in mem.getEventList()):
+                        self.signal = mem.subscriber(event).signal
+                    else:
+                        self.onError(event + ": no such service.signal pair found, and no such event declared in ALMemory. Aborting.")
+                        return
+            else:
+                self.signal = self.session().service("ALMemory").subscriber(event).signal
+
+            self.linkId = self.signal.connect(self.reemitSignal)
+
+    def onInput_onStop(self):
+        with self.lock:
+            self.unsubscribe()
+            self.onStopped()
+
+    def unsubscribe(self):
+        if(self.signal is not None and self.linkId != -1):
+            self.signal.disconnect(self.linkId)
+
+        del self.signal
+        self.signal = None
+        self.linkId = -1
+
+    def reemitSignal(self, *args):
+        if(len(args) == 0):
+            self.onEvent()
+        elif(len(args) == 1):
+            self.onEvent(args[0])
+        else:
+            self.onEvent(args)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is activated, the box will try to subscribe to the signal or the event passed in the box parameter.&#x0A;&#x0A;If it is retriggered and the parameter has changed, the box will undo the previous subscription and subscribe to the new signal or the new event." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the box and cancel the subscription, if any." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="This output is triggered when the box encounters an error, and contains the error message." id="5" /><Output name="onEvent" type="0" type_size="1" nature="2" inner="0" tooltip="This output is triggered each time the signal/event to which the box is connected is emitted/raised. It will carry the payload associated with the signal emission/event raise." id="6" /><Parameter name="event" inherits_from_parent="0" content_type="3" value="MiddleTactilTouched" default_value="" custom_choice="0" tooltip='This parameter describes the signal to connect to, and the service advertising this signal.&#x0A;&#x0A;Use the pattern &quot;Service.Signal&quot; to connect to a signal, or the event key to connect to an event.' id="7" /></Box><Link inputowner="3" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="4" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="2" indexofinput="2" outputowner="4" indexofoutput="3" /><Link inputowner="6" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="5" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="1" indexofinput="2" outputowner="5" indexofoutput="6" /><Link inputowner="8" indexofinput="2" outputowner="1" indexofoutput="4" /><Link inputowner="9" indexofinput="2" outputowner="8" indexofoutput="3" /><Link inputowner="1" indexofinput="3" outputowner="9" indexofoutput="4" /><Link inputowner="10" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="7" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="1" indexofinput="2" outputowner="7" indexofoutput="6" /><Link inputowner="1" indexofinput="2" outputowner="10" indexofoutput="6" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="5" indexofinput="2" outputowner="0" indexofoutput="2" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box></ChoregrapheProject>

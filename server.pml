@@ -4,7 +4,9 @@
     <BehaviorDescriptions>
         <BehaviorDescription name="behavior" src="behavior_1" xar="behavior.xar" />
     </BehaviorDescriptions>
-    <Dialogs />
+    <Dialogs>
+        <Dialog name="ExampleDialog" src="behavior_1/ExampleDialog/ExampleDialog.dlg" />
+    </Dialogs>
     <Resources>
         <File name="index" src="behavior_1/index.html" />
         <File name="bootstrap-theme" src="behavior_1/lib/bootstrap-3.4.1/css/bootstrap-theme.css" />
@@ -54,6 +56,8 @@
         <File name="white" src="behavior_1/img/white.jpg" />
         <File name="yellow" src="behavior_1/img/yellow.jpg" />
     </Resources>
-    <Topics />
+    <Topics>
+        <Topic name="ExampleDialog_enu" src="behavior_1/ExampleDialog/ExampleDialog_enu.top" topicName="ExampleDialog" language="en_US" />
+    </Topics>
     <IgnoredPaths />
 </Package>
