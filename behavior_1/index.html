@@ -245,9 +245,78 @@
     }
     </script>
     
-    <style>
-    </style>
-  
+  <script>
+    window.addEventListener('keydown', doKeyDown, false);
+    window.addEventListener('keyup', doKeyUp, false);
+
+    // arrows
+    var code_left  = 37;
+    var code_up    = 38; 
+    var code_right = 39; 
+    var code_down  = 40;
+    
+    var left  = 0;
+    var right = 0;
+    var up    = 0;
+    var down  = 0;
+    
+    var speedForward  = 1.0;
+    var speedBackward = 1.0;
+    var speedTurn     = 1.0;
+    
+    window.addEventListener("keydown", function(e) {
+        // space and arrow keys
+        if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+            e.preventDefault();
+        }
+    }, false);
+    
+    function doKeyDown(e)
+    {
+			if (e.keyCode == code_up)    { up    = 1; }
+			if (e.keyCode == code_down)  { down  = 1; }
+      
+			if (e.keyCode == code_left)  { left  = 1; }
+			if (e.keyCode == code_right) { right = 1; }      
+		}
+    
+    function doKeyUp(e)
+    {
+			if (e.keyCode == code_up)    { up    = 0; }
+			if (e.keyCode == code_down)  { down  = 0; }
+      
+			if (e.keyCode == code_left)  { left  = 0; }
+			if (e.keyCode == code_right) { right = 0; }      
+		}
+    
+    var moveState = 0;
+    var lastMoveState = 0;
+    
+    function sendMotionCommand() {
+      var x = up*speedForward - down*speedBackward;
+      var y = 0;
+      var r = left*speedTurn - right*speedTurn;
+      send("ALMotion", ["moveToward", x, y, r]);
+    }
+    
+    function processMove() {
+      lastMoveState = moveState;
+      moveState = left + right + up + down;
+      
+      if(moveState > 0) {
+        console.log([left, right, up, down]);
+        sendMotionCommand();
+      } else if(lastMoveState > 0) {
+        // stop
+        console.log([left, right, up, down]);
+        sendMotionCommand();
+      }
+    }
+    
+    setInterval(processMove, 100);
+    
+    </script>
+    
   <body onload="init()">
 
     <!-- Fixed navbar -->
@@ -307,6 +376,7 @@
         </div>
         
         <!-- Move -->
+        <!--
         <div class="col-md-6">
           <div class="fixed-bottom">
             <div class="panel panel-primary">
@@ -326,6 +396,7 @@
               </div>
           </div>
         </div>
+        -->
       
       </div><!-- /.row -->
       
@@ -337,6 +408,7 @@
     <!--<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>-->
     <script src="./lib/bootstrap-3.4.1/js/bootstrap.min.js"></script>
     
+    <!--
     <script>
       // joystick
       let joystick1 = new JoystickController("stick1", 64, 8);
@@ -362,5 +434,6 @@
       //setInterval(stop, 1000);
       
     </script>
+    -->
   </body>
 </html>
