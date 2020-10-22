@@ -27,13 +27,17 @@
     //const peerConnection = new RTCPeerConnection();
   
     // this is a global button group
-    var buttons = [];
-    
-    function blockingActionsExecutor(actions) {
-      return (event) => {
+    var buttonGroups = {
+      "scenes": [],
+      "animations": []
+    };
 
-        // disable all buttons
-        buttons.forEach((b) => b.addClass("disabled"));
+    function blockingActionsExecutor(actions, groupName) {
+    
+      return (event) => {   
+        group = buttonGroups[groupName];
+        // disable all buttons in the group
+        group.forEach((b) => b.addClass("disabled"));
         
         // NOTE: this is prepared for toggled buttons
         //$(event.target).removeClass("disabled");
@@ -44,8 +48,8 @@
           // for debug
           //console.log(result);
           
-          //enable all buttons when the result comes back
-          buttons.forEach((b) => b.removeClass("disabled"));
+          //enable all buttons in the group when the result comes back
+          group.forEach((b) => b.removeClass("disabled"));
         }));
         
         // this prevents the page to scrolling when clicked
@@ -85,6 +89,13 @@
     
     
     function loadScene(data) {
+      
+      // HACK: treat animations differently
+      if(data['title'] == 'Animations') {
+        loadAnimations(data);
+        return;
+      }
+    
       // style="max-height: 30em; overflow-y: auto;"
       var sceneHtml = 
         '<div class="col-md-12"> \
@@ -103,19 +114,20 @@
       sceneHtml = sceneHtml.replace(/{{title}}/ig, data['title']);
       
       var scene = $(sceneHtml);
-
+      
       // create a button list
       var buttonList = $('<ul class="list-group"></ul>').appendTo($(".panel-body", scene));
       for(var e of data['items']) {
         var anchor = $('<a class="btn btn-default" href="#"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + '</a>')
-          .click(blockingActionsExecutor(e['actions']));
+          .click(blockingActionsExecutor(e['actions'], 'scenes'));
         
-        // collect buttons
-        buttons.push(anchor);
+        // HACK: ad too group manualy
+        buttonGroups['scenes'].push(anchor);
         
         $('<li class="list-group-item"></li>').append(anchor).appendTo(buttonList);
       }
       
+      // HACK
       $("#container").append( scene );
       
       console.log(data);
@@ -129,6 +141,21 @@
       data['scenes'].forEach(loadScene);
     }
     
+    
+    function loadAnimations(data) {
+      var scene = $("#animations");
+
+      for(var e of data['items']) {
+        var anchor = $('<a class="btn btn-default btn-lg" href="#" style="margin: 0.5em 0.5em;"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + ' </a> ')
+            .click(blockingActionsExecutor(e['actions'], 'animations'));
+        scene.append(anchor);
+        
+        // HACK: ad too group manualy
+        buttonGroups['animations'].push(anchor);
+      }
+    }
+    
+    /*
     function loadAnimations() {
       send("ALBehaviorManager", ["getInstalledBehaviors"], function(data) 
       {
@@ -150,6 +177,7 @@
         }
       });
     }
+    */
   </script>
   
   
@@ -265,10 +293,10 @@
         
         <!-- animations -->
         <div class="col-md-6">
-          <div class="panel panel-primary">
+          <div id="panel-animations" class="panel panel-primary">
             <div class="panel-heading">Animations</div>
-            <div class="panel-body" style="max-height: 50%; overflow-y: auto;">
-              <ul class="list-group" id="animations"><ul>
+            <div class="panel-body" style="max-height: 50%; overflow-y: auto;" id="animations">
+              <!--<ul class="list-group" id="animations"><ul>-->
             </div>
             <div class="panel-footer">
               <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="behavior_stop(); return false">
@@ -330,8 +358,8 @@
       }
       
       // read values
-      setInterval(update, 100);
-      setInterval(stop, 1000);
+      //setInterval(update, 100);
+      //setInterval(stop, 1000);
       
     </script>
   </body>
