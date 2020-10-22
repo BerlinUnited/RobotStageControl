@@ -104,7 +104,7 @@
             <div class="panel-body"> \
             </div> \
             <div class="panel-footer"> \
-              <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="behavior_stop(); return false"> \
+              <p><a class="btn btn-danger" href="#" role="button" onclick="text_to_speech_stop_all(); return false"> \
                 <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP LAST BEHAVIOR \
               </a></p> \
             </div> \
@@ -188,6 +188,11 @@
     function init() {
       // initialize the page content from a json file
       loadPageFromJson(pageData);
+      
+      // show motion config
+      send("ALMotion", ["getMoveConfig", "Default"], (result)=>console.log(result) );
+      send("ALMotion", ["getMoveConfig", "Max"], (result)=>console.log(result) );
+      send("ALMotion", ["getMoveConfig", "Min"], (result)=>console.log(result) );
     }
     
     // runBehavior
@@ -203,6 +208,10 @@
         path = last_behavior;
       }
       send("ALBehaviorManager", ["stopBehavior", path]); 
+    }
+
+    function text_to_speech_stop_all() {
+      send("ALTextToSpeech", ["stopAll"]);
     }
     
     // say
@@ -319,11 +328,11 @@
       moveState = left + right + up + down + l + r;
       
       if(moveState > 0) {
-        console.log([left, right, up, down, l, r]);
+        //console.log([left, right, up, down, l, r]);
         sendMotionCommand();
       } else if(lastMoveState > 0) {
         // stop
-        console.log([left, right, up, down, l, r]);
+        //console.log([left, right, up, down, l, r]);
         sendMotionCommand();
       }
     }
