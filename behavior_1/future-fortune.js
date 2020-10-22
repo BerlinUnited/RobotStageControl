@@ -3,15 +3,17 @@ pageData =
 {
 	"note":"header kann auch gerne hardcoded sein; type ist in jedem Array der gleiche, der kann im Zweifel auch weggelassen werden",
 	"header":[
-		{"type":"non-blocking", "title":"Head left", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadLeft"]}]},
-		{"type":"non-blocking", "title":"Head right", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadRight"]}]},
-		{"type":"non-blocking", "title":"Head center", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHead"]}]},
-		{"type":"non-blocking", "title":"start BasicAwareness", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/reanableBasicAwareness"]}]},
-		{"type":"non-blocking", "title":"stop BasicAwareness", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/stopBasicAwareness"]}]},
-		{"type":"non-blocking", "title":"Sound On", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOn"]}]},
-		{"type":"non-blocking", "title":"Sound Off", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOff"]}]},
-		{"type":"non-blocking", "title":"Safety On", "actions":[{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","Move", 1]}]},
-		{"type":"non-blocking", "title":"Safety Off", "actions":[{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","Move", 0]}]}
+		{"type":"non-blocking", "title":"Head left", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadLeft"]}],"color":"white"},
+		{"type":"non-blocking", "title":"Head center", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHead"]}],"color":"white"},
+		{"type":"non-blocking", "title":"Head right", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadRight"]}],"color":"white"},
+		{"type":"non-blocking", "title":"BasicAwareness On", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/reanableBasicAwareness"]}],"color":"yellow"},
+		{"type":"non-blocking", "title":"BasicAwareness Off", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/stopBasicAwareness"]}],"color":"yellow"},
+		{"type":"non-blocking", "title":"Sound On", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOn"]}],"color":"cyan"},
+		{"type":"non-blocking", "title":"Sound Off", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOff"]}],"color":"cyan"},
+		{"type":"non-blocking", "title":"Safety On", "actions":[{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","Move", 1]}],"color":"blue"},
+		{"type":"non-blocking", "title":"Safety Off", "actions":[{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","Move", 0]}],"color":"blue"},
+		{"type":"non-blocking", "title":"Rest", "actions":[{"service":"ALMotion", "call":["rest"]}],"color":"red"},
+		{"type":"non-blocking", "title":"Wake Up", "actions":[{"service":"ALMotion", "call":["wakeUp"]}],"color":"red"}
 	],
 	"scenes":[
 		{"type":"headline", "title":"2 R.U.R.", "items":[
