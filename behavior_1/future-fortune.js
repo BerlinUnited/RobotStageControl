@@ -185,16 +185,19 @@ pageData =
 					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
 				]},
 				{"type":"button", "title":"9 B Correct", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Bcorrect)"]}
 				]},
 				{"type":"button", "title":"9 C Correct", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Ccorrect)"]}
 				]},
 				{"type":"button", "title":"9 D Correct", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Acorrect)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^run(theater_playvideo/Dcorrect)"]}
 				]},
 				{"type":"button", "title":"9 Picture D Correct", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=answerD "]}
+				]},
+				{"type":"button", "title":"9 Picture Black Screen", "actions":[
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black "]}
 				]}
 			]
 		},
