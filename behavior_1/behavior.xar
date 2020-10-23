@@ -42,8 +42,30 @@ def print_methods(o, log):
   #print(object_methods)
   log.info(object_methods)
 
+
+#https://stackoverflow.com/questions/956867/how-to-get-string-objects-instead-of-unicode-from-json
+# call: json.loads(json_text, object_hook=_byteify)
+def _byteify(data, ignore_dicts = False):
+    # if this is a unicode string, return its string representation
+    if isinstance(data, unicode):
+        return data.encode('utf-8')
+    # if this is a list of values, return list of byteified values
+    if isinstance(data, list):
+        return [ _byteify(item, ignore_dicts=True) for item in data ]
+    # if this is a dictionary, return dictionary of byteified keys and values
+    # but only if we haven't already byteified it
+    if isinstance(data, dict) and not ignore_dicts:
+        return {
+            _byteify(key, ignore_dicts=True): _byteify(value, ignore_dicts=True)
+            for key, value in data.iteritems()
+        }
+    # if it's anything else, return it in its original form
+    return data
+
+
 # global
 naoqi = None
+
 
 class NaoQIManager:
     def __init__(self, session, logger):
@@ -133,10 +155,11 @@ class NaoQIManager:
           print("WARNING: running without naoqi")
 
         try:
-            print("call {}({})".format(service, call))
+            self.logger.info("call {}({})".format(service, call))
             if HAS_NAOQI:
               proxy = self.getService(service)
               name, args = call[0], call[1:]
+              return getattr(proxy, name)(*args)
               id = getattr(proxy.post, name)(*args)
               self.futures[service].append(id)
               #self.logger.info("{} wait {}".format(service,id))
@@ -156,8 +179,84 @@ class NaoQIManager:
         return None
 
 
+class NaoQIManagerProxy:
+    def __init__(self, session, logger):
+        self.session = session
+        self.logger = logger
+
+        self.services = {}
+        self.services_stop = {}
+
+        self.task_ids = {} # list of running tasks
+
+        # create a connect a local session (in standalone case)
+        #self.session = qi.Session()
+        #self.session.connect("tcp://localhost:9559")
+
+    def getService(self, service):
+        # service is not connected yet
+        if not service in self.services:
+            self.logger.info("Connect to Proxy: {}".format(service))
+
+            self.services[service] = ALProxy(service)
+            self.services_stop[service] = ALProxy(service, True)
+            self.task_ids[service] = []
+
+        return self.services[service]
+
+    @qi.bind(paramsType=(), methodName="stopAll")
+    def stopAll(self):
+        self.logger.info("[NaoQIManager] stopAll Proxy")
+
+        n = 0
+        for service in self.task_ids:
+            if service != "NaoQIManager":
+                for id in self.task_ids[service]:
+                    self.services_stop[service].stop(id)
+                    n += 1
+                self.task_ids[service] = []
+
+        return "stopAll canceled {} tasks".format(n)
+
+    # make a call to a service
+    def call(self, service, call):
+        try:
+            self.logger.info("call {}({})".format(service, call))
+
+            proxy = self.getService(service)
+            name, args = call[0], call[1:]
+
+            # hack: synchronized call for the motion
+            if service == "ALMotion":
+                return getattr(proxy, name)(*args)
+
+            # run commandy asynchronius
+            id = getattr(proxy.post, name)(*args)
+
+            # wait for the task to be finished
+            self.task_ids[service].append(id)
+            #self.logger.info("{} wait {}".format(service,id))
+            result = proxy.wait(id, 0)
+            self.task_ids[service].remove(id)
+
+            return result
+
+        except Exception as ex:
+            self.logger.warning(ex)
+            self.logger.warning("[NaoQIManager] {} execution canceled".format(name))
+            return "{}: execution canceled".format(name)
+        finally:
+            try:
+                self.task_ids[service].remove(future)
+            except:
+                pass
+
+        return None
+
+
     #http://doc.aldebaran.com/2-5/naoqi/interaction/dialog/aldialog_tuto.html
     # EXPERIMENTAL: not used yet
+    '''
     def doDialoge(self, call):
         ALDialog = getService("ALDialog")
         ALDialog.setLanguage("English")
@@ -176,6 +275,7 @@ class NaoQIManager:
         ALDialog.unsubscribe("my_setFocus_test")
         ALDialog.deactivateTopic(topic_name)
         ALDialog.unloadTopic(topic_name)
+    '''
 
 
 class NaoQiHandler(SimpleHTTPRequestHandler):
@@ -196,19 +296,6 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
     def do_HEAD(self):
         self._set_headers()
 
-    def run_naoqi(self, service, call):
-        # create a naoqi manager if not avaliable yet
-        #if not hasattr(self, 'naoqi'):
-        #    self.naoqi = NaoQIManager()
-
-        # encode everything as ascii, this is crucial
-        service = service.encode('ascii')
-        call = [c.encode('ascii') if callable(getattr(c, 'encode', None)) else c for c in call]
-
-        global naoqi
-        return naoqi.call(service, call)
-
-
     def do_POST(self):
         try:
           # get the length of the data to read
@@ -220,12 +307,13 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
 
           data = self.rfile.read(length)
 
-          # parse json data
-          msg = json.loads(data)
+          # parse json data as ascii
+          msg = json.loads(data, object_hook=_byteify)
           print(msg)
 
-          # forward the call to naoqi
-          result = self.run_naoqi(msg['proxy'], msg['call'])
+          # forward the call to global naoqi
+          global naoqi
+          result = naoqi.call(msg['proxy'], msg['call'])
 
           # sed a response
           self._set_headers()
@@ -249,8 +337,9 @@ class MyClass(GeneratedClass):
         GeneratedClass.__init__(self)
 
         global naoqi
-        naoqi = NaoQIManager(self.session(), self.logger)
-        print_methods(self.session(), self.logger)
+        #naoqi = NaoQIManager(self.session(), self.logger)
+        naoqi = NaoQIManagerProxy(self.session(), self.logger)
+        #print_methods(self.session(), self.logger)
 
         try:
             self.idNaoQIManager = self.session().registerService("NaoQIManager", naoqi)
