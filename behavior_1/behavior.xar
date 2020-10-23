@@ -50,6 +50,7 @@ class NaoQIManager:
       self.session = session
       self.logger = logger
       self.services = {}
+      self.services_stop = {}
       self.futures = {}# list of running tasks
 
       #if HAS_NAOQI:
@@ -67,15 +68,18 @@ class NaoQIManager:
 
           self.logger.info("INFO: Get service: {}".format(service))
           if HAS_NAOQI:
-            self.services[service] = self.session.service(service)
+            #self.services[service] = self.session.service(service)
+            self.services[service] = ALProxy(service)
+            self.services_stop[service] = ALProxy(service, True)
             self.futures[service] = []
           else:
             self.services[service] = None
 
         return self.services[service]
 
-    @qi.bind(paramsType=(), methodName="stopAll")
-    def stopAll(self):
+    @qi.bind(paramsType=(), methodName="stopAll_Future")
+    def stopAll_Future(self):
+        self.logger.info("[NaoQIManager] stopAll Future")
         n = 0
         for service in self.futures:
             if service != "NaoQIManager":
@@ -84,8 +88,19 @@ class NaoQIManager:
                     n += 1
         return "stopAll canceled {} tasks".format(n)
 
+    @qi.bind(paramsType=(), methodName="stopAll")
+    def stopAll(self):
+        self.logger.info("[NaoQIManager] stopAll Proxy")
+        n = 0
+        for service in self.futures:
+            if service != "NaoQIManager":
+                for id in self.futures[service]:
+                    self.services_stop[service].stop(id)
+                    n += 1
+        return "stopAll canceled {} tasks".format(n)
+
     # make a call to a service
-    def call(self, service, call):
+    def call_Future(self, service, call):
         if not HAS_NAOQI:
           print("WARNING: running without naoqi")
 
@@ -102,6 +117,34 @@ class NaoQIManager:
               self.futures[service].remove(future)
               return future.value()
         except:
+            self.logger.warning("[NaoQIManager] {} execution canceled".format(name))
+            return "{}: execution canceled".format(name)
+        finally:
+            try:
+                self.futures[service].remove(future)
+            except:
+                pass
+
+        return None
+
+    # make a call to a service
+    def call(self, service, call):
+        if not HAS_NAOQI:
+          print("WARNING: running without naoqi")
+
+        try:
+            print("call {}({})".format(service, call))
+            if HAS_NAOQI:
+              proxy = self.getService(service)
+              name, args = call[0], call[1:]
+              id = getattr(proxy.post, name)(*args)
+              self.futures[service].append(id)
+              #self.logger.info("{} wait {}".format(service,id))
+              result = proxy.wait(id, 0)
+              self.futures[service].remove(id)
+              return result
+        except Exception as ex:
+            self.logger.warning(ex)
             self.logger.warning("[NaoQIManager] {} execution canceled".format(name))
             return "{}: execution canceled".format(name)
         finally:
