@@ -36,7 +36,7 @@
     function blockingActionsExecutor(actions, groupName) {
     
       return (event) => {   
-        group = buttonGroups[groupName];
+        var group = buttonGroups[groupName];
         // disable all buttons in the group
         group.forEach((b) => b.addClass("disabled"));
         
@@ -48,6 +48,7 @@
         actions.forEach(({service, call}) => send(service, call, (result) => {
           // for debug
           //console.log(result);
+          //console.log("release: " + groupName)
           
           //enable all buttons in the group when the result comes back
           group.forEach((b) => b.removeClass("disabled"));
@@ -105,8 +106,8 @@
             <div class="panel-body"> \
             </div> \
             <div class="panel-footer"> \
-              <p><a class="btn btn-danger" href="#" role="button" onclick="text_to_speech_stop_all(); return false"> \
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP LAST BEHAVIOR \
+              <p><a class="btn btn-danger" href="#" role="button" onclick="stopAll(); return false"> \
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP ALL TASKS \
               </a></p> \
             </div> \
           </div> \
@@ -218,8 +219,9 @@
       send("ALBehaviorManager", ["stopBehavior", path]); 
     }
 
-    function text_to_speech_stop_all() {
-      send("ALTextToSpeech", ["stopAll"]);
+    function stopAll() {
+      //send("ALTextToSpeech", ["stopAll"]);
+      send("NaoQIManager", ["stopAll"]);
     }
     
     // say
@@ -390,6 +392,14 @@
     
     setInterval(processMove, 100);
     
+    
+    // feature in progress: make sure we have a good connection
+    var timePingSent = 0;
+    function sendPing() {
+      timePingSent = getTime();
+      send("ALMemory", ["ping"], (e) => { console.log(e); console.log(getTime()-timePingSent); });
+    }
+    //setInterval(sendPing, 1000);
     </script>
     
   <body onload="init()">
@@ -410,6 +420,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul id="navbar-left" class="nav navbar-nav">
             <!--<li class="active"><a href="#">Home</a></li>-->
+            <a class="btn btn-default btn-lg disabled" href="#" onclick="alert('blub'); return false">TEST</a>
           </ul>
           
           <ul id="navbar-right" class="nav navbar-nav navbar-right">
@@ -443,8 +454,8 @@
               <!--<ul class="list-group" id="animations"><ul>-->
             </div>
             <div class="panel-footer">
-              <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="text_to_speech_stop_all(); return false">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP LAST BEHAVIOR
+              <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="stopAll(); return false">
+                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP ALL TASKS
               </a></p>
             </div>
           </div>

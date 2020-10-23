@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Python Script" id="1" localization="8" tooltip="This box contains a basic python script and can be used to create any python script box you would like.&#x0A;&#x0A;To edit its script, double-click on it." x="334" y="43"><bitmap>media/images/box/box-python-script.png</bitmap><script language="4"><content><![CDATA[from __future__ import print_function
 
+try:
+    import __builtin__
+except ImportError:
+    # Python 3
+    import builtins as __builtin__
+
+globalLogger = None
+def print(*args, **kwargs):
+    global globalLogger
+    if globalLogger is not None:
+        globalLogger.log(*args, **kwargs)
+    return __builtin__.print(*args, **kwargs)
+
 # note this for Pythong 2.7 and 3.x compatibility
 try:
   from SimpleHTTPServer import SimpleHTTPRequestHandler
@@ -24,17 +37,20 @@ import json
 PORT = 8000
 
 # debug stuff
-def print_methods(o):
+def print_methods(o, log):
   object_methods = [method_name for method_name in dir(o) if callable(getattr(o, method_name))]
-  print(object_methods)
+  #print(object_methods)
+  log.info(object_methods)
 
 # global
 naoqi = None
 
 class NaoQIManager:
-    def __init__(self, session):
+    def __init__(self, session, logger):
       self.session = session
+      self.logger = logger
       self.services = {}
+      self.futures = {}# list of running tasks
 
       #if HAS_NAOQI:
       #  self.session = module.session()
@@ -43,28 +59,80 @@ class NaoQIManager:
       #self.session = qi.Session()
       #self.session.connect("tcp://localhost:9559")
 
+
+    def getService(self, service):
+        # service is not connected yet
+        if not service in self.services:
+          self.logger.info("Connect to Proxy: {}".format(service))
+
+          self.logger.info("INFO: Get service: {}".format(service))
+          if HAS_NAOQI:
+            self.services[service] = self.session.service(service)
+            self.futures[service] = []
+          else:
+            self.services[service] = None
+
+        return self.services[service]
+
+    @qi.bind(paramsType=(), methodName="stopAll")
+    def stopAll(self):
+        n = 0
+        for service in self.futures:
+            if service != "NaoQIManager":
+                for f in self.futures[service]:
+                    f.cancel()
+                    n += 1
+        return "stopAll canceled {} tasks".format(n)
+
     # make a call to a service
     def call(self, service, call):
         if not HAS_NAOQI:
           print("WARNING: running without naoqi")
 
-        # service is not connected yet
-        if not service in self.services:
-          print("Connect to Proxy: {}".format(service))
-
-          print("INFO: Get service: {}".format(service))
-          if HAS_NAOQI:
-            self.services[service] = self.session.service(service)
-          else:
-            self.services[service] = None
-
-        print("call {}({})".format(service, call))
-        if HAS_NAOQI:
-          return self.services[service].call(*call)
-
-        #print("DONE")
+        try:
+            print("call {}({})".format(service, call))
+            if HAS_NAOQI:
+              #return self.getService(service).call(*call)
+              #http://doc.aldebaran.com/2-5/dev/libqi/guide/py-client.html#guide-py-client
+              # calls the function with the _async=True
+              name, args = call[0], call[1:]
+              future = getattr(self.getService(service), name)(*args, _async=True)
+              self.futures[service].append(future)
+              future.wait()
+              self.futures[service].remove(future)
+              return future.value()
+        except:
+            self.logger.warning("[NaoQIManager] {} execution canceled".format(name))
+            return "{}: execution canceled".format(name)
+        finally:
+            try:
+                self.futures[service].remove(future)
+            except:
+                pass
 
         return None
+
+
+    #http://doc.aldebaran.com/2-5/naoqi/interaction/dialog/aldialog_tuto.html
+    # EXPERIMENTAL: not used yet
+    def doDialoge(self, call):
+        ALDialog = getService("ALDialog")
+        ALDialog.setLanguage("English")
+
+        topic_content = ('topic: ~mytopic()\n'
+                         'language: enu\n'
+                         'proposal: ' + str(call) + '\n')
+
+        topic_name = ALDialog.loadTopicContent(topic_content)
+        ALDialog.activateTopic(topic_name)
+
+        ALDialog.subscribe("my_setFocus_test")
+        ALDialog.setFocus("mytopic")
+        ALDialog.forceOutput()
+
+        ALDialog.unsubscribe("my_setFocus_test")
+        ALDialog.deactivateTopic(topic_name)
+        ALDialog.unloadTopic(topic_name)
 
 
 class NaoQiHandler(SimpleHTTPRequestHandler):
@@ -138,7 +206,17 @@ class MyClass(GeneratedClass):
         GeneratedClass.__init__(self)
 
         global naoqi
-        naoqi = NaoQIManager(self.session())
+        naoqi = NaoQIManager(self.session(), self.logger)
+        print_methods(self.session(), self.logger)
+
+        try:
+            self.idNaoQIManager = self.session().registerService("NaoQIManager", naoqi)
+        except ex:
+            self.logger.error("[RemoteControlServer] could not register service NaoQIManager")
+            #print_methods(self.session().service("NaoQIManager"), self.logger)
+
+        #global globalLogger
+        #globalLogger = self.logger
 
     def onLoad(self):
         # change the working directory to the directory of the app
@@ -149,21 +227,30 @@ class MyClass(GeneratedClass):
         self.server = ThreadedTCPServer(("", PORT), NaoQiHandler)
 
     def onUnload(self):
+        global naoqi
+        naoqi.stopAll()
+
+        try:
+            self.session().unregisterService(self.idNaoQIManager)
+        except:
+            self.logger.error("[RemoteControlServer] could not unregister NaoQIManager")
+
         t = threading.Thread(target=self.server.shutdown)
-        self.logger.info("Shutting down server ... ")
+        self.logger.info("[RemoteControlServer] onUnload: Shutting down server ... ")
         t.start()
         t.join()
         #self.server.shutdown()
-        self.logger.info("Shutting down server done.")
+        self.logger.info("[RemoteControlServer] onUnload: Shutting down server done.")
 
     def onInput_onStart(self):
-        self.logger.info("Serving at port: {}".format(PORT))
+        self.logger.info("[RemoteControlServer] onInput_onStart: Serving at port: {}".format(PORT))
         self.server.serve_forever()
-        self.logger.info("Stopped serving at port: {}".format(PORT))
+        self.logger.info("[RemoteControlServer] onInput_onStart: Stopped serving at port: {}".format(PORT))
+        self.onStopped()
 
     def onInput_onStop(self):
         self.onUnload()
-        self.onStopped()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /></Box><Box name="Initialize Pepper" id="5" localization="8" tooltip="Enter description here" x="338" y="146"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="Wait_onStart" type="1" type_size="1" nature="2" inner="0" tooltip="This input has been automatically generated&#x0A;by converting several boxes into a single box." id="2" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram scale="84.0896"><Box name="Dialog" id="3" localization="8" tooltip="An example of multilanguage dialog implementation" x="338" y="146"><dialogFile>../empty/empty.dlg</dialogFile><bitmap>media/images/box/box-dialog.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="playAGame" type="1" type_size="1" nature="2" inner="0" tooltip="stimulated using $playAGame=1 in qiChat script when User wants to play a game&#x0A;" id="5" /><Resource name="Speech" type="Lock" timeout="0" /><Resource name="Speech recognition" type="Lock" timeout="0" /></Box><Box name="Wait" id="6" localization="8" tooltip="Wait a moment before sending a signal on the output. &#x0A;Can be stopped anytime. &#x0A;Stimulating the input again before output is activated restarts the waiting period.&#x0A;" x="62" y="325"><bitmap>media/images/box/wait.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+        self.logger.info("[RemoteControlServer] onInput_onStop: ---------------- fire onStopped!!")]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /></Box><Box name="Initialize Pepper" id="5" localization="8" tooltip="Enter description here" x="338" y="146"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="Wait_onStart" type="1" type_size="1" nature="2" inner="0" tooltip="This input has been automatically generated&#x0A;by converting several boxes into a single box." id="2" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram scale="84.0896"><Box name="Dialog" id="3" localization="8" tooltip="An example of multilanguage dialog implementation" x="338" y="146"><dialogFile>../empty/empty.dlg</dialogFile><bitmap>media/images/box/box-dialog.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="playAGame" type="1" type_size="1" nature="2" inner="0" tooltip="stimulated using $playAGame=1 in qiChat script when User wants to play a game&#x0A;" id="5" /><Resource name="Speech" type="Lock" timeout="0" /><Resource name="Speech recognition" type="Lock" timeout="0" /></Box><Box name="Wait" id="6" localization="8" tooltip="Wait a moment before sending a signal on the output. &#x0A;Can be stopped anytime. &#x0A;Stimulating the input again before output is activated restarts the waiting period.&#x0A;" x="62" y="325"><bitmap>media/images/box/wait.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
     def __init__(self):
         GeneratedClass.__init__(self, False)
 
@@ -573,4 +660,4 @@ class MyClass(GeneratedClass):
         elif(len(args) == 1):
             self.onEvent(args[0])
         else:
-            self.onEvent(args)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is activated, the box will try to subscribe to the signal or the event passed in the box parameter.&#x0A;&#x0A;If it is retriggered and the parameter has changed, the box will undo the previous subscription and subscribe to the new signal or the new event." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the box and cancel the subscription, if any." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="This output is triggered when the box encounters an error, and contains the error message." id="5" /><Output name="onEvent" type="0" type_size="1" nature="2" inner="0" tooltip="This output is triggered each time the signal/event to which the box is connected is emitted/raised. It will carry the payload associated with the signal emission/event raise." id="6" /><Parameter name="event" inherits_from_parent="0" content_type="3" value="theater_show_image" default_value="" custom_choice="0" tooltip='This parameter describes the signal to connect to, and the service advertising this signal.&#x0A;&#x0A;Use the pattern &quot;Service.Signal&quot; to connect to a signal, or the event key to connect to an event.' id="7" /></Box><Link inputowner="3" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="4" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="2" indexofinput="2" outputowner="4" indexofoutput="3" /><Link inputowner="6" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="5" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="1" indexofinput="2" outputowner="5" indexofoutput="6" /><Link inputowner="8" indexofinput="2" outputowner="1" indexofoutput="4" /><Link inputowner="9" indexofinput="2" outputowner="8" indexofoutput="3" /><Link inputowner="1" indexofinput="3" outputowner="9" indexofoutput="4" /><Link inputowner="10" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="7" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="1" indexofinput="2" outputowner="7" indexofoutput="6" /><Link inputowner="1" indexofinput="2" outputowner="10" indexofoutput="6" /><Link inputowner="11" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="13" indexofinput="2" outputowner="11" indexofoutput="6" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="5" indexofinput="2" outputowner="0" indexofoutput="2" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box></ChoregrapheProject>
+            self.onEvent(args)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is activated, the box will try to subscribe to the signal or the event passed in the box parameter.&#x0A;&#x0A;If it is retriggered and the parameter has changed, the box will undo the previous subscription and subscribe to the new signal or the new event." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the box and cancel the subscription, if any." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="This output is triggered when the box encounters an error, and contains the error message." id="5" /><Output name="onEvent" type="0" type_size="1" nature="2" inner="0" tooltip="This output is triggered each time the signal/event to which the box is connected is emitted/raised. It will carry the payload associated with the signal emission/event raise." id="6" /><Parameter name="event" inherits_from_parent="0" content_type="3" value="theater_show_image" default_value="" custom_choice="0" tooltip='This parameter describes the signal to connect to, and the service advertising this signal.&#x0A;&#x0A;Use the pattern &quot;Service.Signal&quot; to connect to a signal, or the event key to connect to an event.' id="7" /></Box><Link inputowner="3" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="4" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="2" indexofinput="2" outputowner="4" indexofoutput="3" /><Link inputowner="6" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="5" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="1" indexofinput="2" outputowner="5" indexofoutput="6" /><Link inputowner="8" indexofinput="2" outputowner="1" indexofoutput="4" /><Link inputowner="9" indexofinput="2" outputowner="8" indexofoutput="3" /><Link inputowner="1" indexofinput="3" outputowner="9" indexofoutput="4" /><Link inputowner="10" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="7" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="1" indexofinput="2" outputowner="7" indexofoutput="6" /><Link inputowner="1" indexofinput="2" outputowner="10" indexofoutput="6" /><Link inputowner="11" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="13" indexofinput="2" outputowner="11" indexofoutput="6" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Link inputowner="1" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="5" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="0" indexofinput="4" outputowner="1" indexofoutput="4" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box></ChoregrapheProject>
