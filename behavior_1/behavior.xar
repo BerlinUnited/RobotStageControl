@@ -462,39 +462,16 @@ class MyClass(GeneratedClass):
     def onInput_onStart(self, img):
         # We create TabletService here in order to avoid
         # problems with connections and disconnections of the tablet during the life of the application
-        self.imgs={
-            "black":"img/black.jpg",
-            "blue":"img/blue.jpg",
-            "colors":"img/colors.gif",
-            "dark_red":"img/dark_red.jpg",
-            "green":"img/green.jpg",
-            "lavender":"img/lavender.jpg",
-            "light_blue":"img/light_blue.jpg",
-            "light_green":"img/light_green.jpg",
-            "light_orange":"img/light_orange.jpg",
-            "orange":"img/orange.jpg",
-            "pink":"img/pink.jpg",
-            "purple":"img/purple.jpg",
-            "red":"img/red.jpg",
-            "white":"img/white.jpg",
-            "yellow":"img/yellow.jpg",
-            "answerD":"img/D.png"
-        }
-        imgs["black"]="img/black.jpg"
-        imgs["blue"]="img/blue.jpg"
-        imgs["colors"]="img/colors.gif"
-        imgs["dark_red"]="img/dark_red.jpg"
-        imgs["green"]="img/green.jpg"
-        imgs["lavender"]="img/lavender.jpg"
-        imgs["ligt_blue"]="img/light_blue.jpg"
-        imgs["light_green"]="img/light_green.jpg"
-        imgs["light_orange"]=""img/light_orange"
+        self.imgs={"black":"img/black.jpg","blue":"img/blue.jpg","colors":"img/colors.gif","dark_red":"img/dark_red.jpg","green":"img/green.jpg","lavender":"img/lavender.jpg","light_blue":"img/light_blue.jpg","light_green":"img/light_green.jpg","light_orange":"img/light_orange.jpg","orange":"img/orange.jpg","pink":"img/pink.jpg","purple":"img/purple.jpg","red":"img/red.jpg","white":"img/white.jpg","yellow":"img/yellow.jpg","answerD":"img/D.png"}
+        self.logger.warning("theater_show_image is '" + img + "'")
+        if not img in self.imgs.keys():
+            self.logger.warning("'" + img + "' is not in imgs")
+            url = "img/pink.jpg"
+        else:
+            url = self.imgs[img]
         tabletService = self._getTabletService()
         if tabletService:
             try:
-                url = self.getParameter("ImageUrl")
-                if url == '':
-                    self.logger.error("URL of the image is empty")
                 if not url.startswith('http'):
                     url = self._getAbsoluteUrl(url)
                 tabletService.showImage(url)

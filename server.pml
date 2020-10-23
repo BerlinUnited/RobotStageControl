@@ -56,6 +56,7 @@
         <File name="red" src="html/img/red.jpg" />
         <File name="white" src="html/img/white.jpg" />
         <File name="yellow" src="html/img/yellow.jpg" />
+        <File name="D" src="html/img/D.png" />
     </Resources>
     <Topics>
         <Topic name="ExampleDialog_enu" src="behavior_1/ExampleDialog/ExampleDialog_enu.top" topicName="ExampleDialog" language="en_US" />
