@@ -71,14 +71,8 @@ pageData =
 				{"type":"button", "title":"3.7 Rehearsal", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Waiting/Robot_1) ^run(rur_rehearsal/text_7)"]}
 				]},
-				{"type":"button", "title":"3.8 Rehearsal Test old", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Waiting/AirGuitar_1) ^run(rur_rehearsal/text_8)"]}
-				]},
-				{"type":"button", "title":"3.8 Rehearsal Test Dialog", "actions":[
-					{"service":"ALMemory", "call":["raiseEvent","theater_say_3_8", "1"]}
-				]},
 				{"type":"button", "title":"3.8 Rehearsal", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Waiting/AirGuitar_1) \\pau=31000\\ "]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Waiting/AirGuitar_1) ^run(rur_rehearsal/text_8)"]}
 				]},
 				{"type":"button", "title":"3.9 Rehearsal", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Emotions/Negative/Exhausted_1) ^run(rur_rehearsal/text_9)"]}
