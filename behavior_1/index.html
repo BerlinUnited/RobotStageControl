@@ -256,6 +256,7 @@
       };
       
       xhr.onerror = function (e) {
+        console.error(e);
         console.error(xhr.statusText);
         // also call the handler in case of error
         if(typeof handler !== "undefined") {
@@ -269,27 +270,25 @@
     </script>
     
   <script>
-    window.addEventListener('keydown', doKeyDown, false);
-    window.addEventListener('keyup', doKeyUp, false);
-
-    // arrows
-    var code_left  = 37;
-    var code_up    = 38; 
-    var code_right = 39; 
-    var code_down  = 40;
+    // watch when the key down was requested last 
+    // key-up events get lost sometimes
+    //var last_keydown_time;
+    var key_names = {
+      37: "left",
+      38: "up",
+      39: "right",
+      40: "down",
+      65: "l", // a
+      68: "r"  // r
+    };
     
-    var code_l     = 65;
-    var code_r     = 68;
+    // initialize the states
+    var key_state = {};
+    for(k in key_names) {
+      key_state[key_names[k]] = 0;
+    }
     
-    var left  = 0;
-    var right = 0;
-    var up    = 0;
-    var down  = 0;
-    
-    // L/R buttons
-    var l     = 0;
-    var r     = 0;
-    
+    // speed configs
     var speedForward  = 1.0;
     var speedBackward = 1.0;
     var speedStrave   = 1.0;
@@ -316,35 +315,26 @@
       ['TorsoWy', 0.17]
     ];
     
-    window.addEventListener("keydown", function(e) {
-        // space and arrow keys
-        if([code_left, code_right, code_up, code_down, code_l, code_r].indexOf(e.keyCode) > -1) {
-            e.preventDefault();
-        }
-    }, false);
-    
+    window.addEventListener('keydown', doKeyDown, false);
+    window.addEventListener('keyup', doKeyUp, false);
+
     function doKeyDown(e)
     {
-			if (e.keyCode == code_up)    { up    = 1; }
-			if (e.keyCode == code_down)  { down  = 1; }
-      
-			if (e.keyCode == code_left)  { left  = 1; }
-			if (e.keyCode == code_right) { right = 1; }   
-
-      if (e.keyCode == code_l)     { l = 1; }
-			if (e.keyCode == code_r)     { r = 1; }        
+      if(e.keyCode in key_names) { 
+        var name = key_names[e.keyCode]; 
+        key_state[name] = 1;  
+        //last_keydown_time = +new Date(); 
+        
+        e.preventDefault();
+      }       
 		}
     
     function doKeyUp(e)
     {
-			if (e.keyCode == code_up)    { up    = 0; }
-			if (e.keyCode == code_down)  { down  = 0; }
-      
-			if (e.keyCode == code_left)  { left  = 0; }
-			if (e.keyCode == code_right) { right = 0; }   
-
-      if (e.keyCode == code_l)     { l = 0; }
-			if (e.keyCode == code_r)     { r = 0; } 
+      if( e.keyCode in key_names) { 
+        var name = key_names[e.keyCode]; 
+        key_state[name] = 0;
+      }
 		}
     
     var moveState = 0;
@@ -353,9 +343,9 @@
     var lastCommandDone = true;
     
     function sendMotionCommand() {
-      var move_x = up * speedForward - down * speedBackward;
-      var move_y = l * speedStrave - r * speedStrave;
-      var move_r = left * speedTurn - right * speedTurn;
+      var move_x = key_state["up"]   * speedForward - key_state["down"]  * speedBackward;
+      var move_y = key_state["l"]    * speedStrave  - key_state["r"]     * speedStrave;
+      var move_r = key_state["left"] * speedTurn    - key_state["right"] * speedTurn;
       
       lastCommandDone = false;
       send("ALMotion", ["moveToward", move_x, move_y, move_r, motionConfig], (e) => {lastCommandDone=true;} );
@@ -366,18 +356,37 @@
     }
     
     function processMove() {
+      // note: the states have to be global
       lastMoveState = moveState;
-      moveState = left | 2*right | 4*up | 8*down | 16*l | 32*r;
+      // calculate a unique key state
+      moveState = 0;
+      var shift = 1;
+      for(key in key_state) {
+        moveState = moveState | shift*key_state[key];
+        shift *= 2;
+      }
       //console.log(moveState);
       
-      if(
-        (moveState != lastMoveState && (moveState > 0 || lastCommandDone)) || 
-        (moveState > 0 && getTime() > timeStampLastMoveCommand + 1000)) // resend
+      // check if the keys are dead => reset all keys
+      // doesn't really work
+      /*
+      var now = +new Date();
+      if(moveState > 0 && now > last_keydown_time + 1000) {
+        console.warn("some keys are dead. reset all key states");
+        for(key in key_state) {
+          key_state[key] = 0;
+        }
+        moveState = 0;
+      }
+      */
+      
+      if( (moveState != lastMoveState) || // send on change
+          (moveState > 0 && getTime() > timeStampLastMoveCommand + 1000)) // resend
       {
-        console.log(timeStampLastMoveCommand);
         timeStampLastMoveCommand = getTime();
         sendMotionCommand();
       }
+      
       /*
       if(moveState > 0 && moveState != lastMoveState) {
         //console.log([left, right, up, down, l, r]);
