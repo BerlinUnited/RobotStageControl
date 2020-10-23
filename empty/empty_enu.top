@@ -9,3 +9,4 @@ language: enu
 
 # Replying to speech
 #u:(~hello) ~hello
+u:(e:theater_say_3_8) $theater_show_image=white ^run(animations/Stand/Waiting/AirGuitar_1) \pau=31000\
