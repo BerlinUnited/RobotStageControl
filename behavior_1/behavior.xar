@@ -204,27 +204,34 @@ class NaoQIManagerProxy:
 
         return self.services[service]
 
-    @qi.bind(paramsType=(), methodName="stopAll")
+    # experimental: service
+    #@qi.bind(paramsType=(), methodName="stopAll")
     def stopAll(self):
         self.logger.info("[NaoQIManager] stopAll Proxy")
-
+        errors = []
         n = 0
         for service in self.task_ids:
             if service != "NaoQIManager":
                 for id in self.task_ids[service]:
-                    self.services_stop[service].stop(id)
+                    # dont crash if stop didn't work, just continue
+                    try:
+                        self.services_stop[service].stop(id)
+                        qdqdqdwqd()
+                    except Exception as ex:
+                        errors += [ex]
+                        self.logger.warning(ex)
                     n += 1
                 self.task_ids[service] = []
 
-        return "stopAll canceled {} tasks".format(n)
+        return "stopAll canceled {} tasks\n {}".format(n, errors)
 
     # make a call to a service
     def call(self, service, call):
         try:
             self.logger.info("call {}({})".format(service, call))
+            name, args = call[0], call[1:]
 
             proxy = self.getService(service)
-            name, args = call[0], call[1:]
 
             # hack: synchronized call for the motion
             if service == "ALMotion":
@@ -244,10 +251,10 @@ class NaoQIManagerProxy:
         except Exception as ex:
             self.logger.warning(ex)
             self.logger.warning("[NaoQIManager] {} execution canceled".format(name))
-            return "{}: execution canceled".format(name)
+            return "{}.{}: execution canceled".format(service,name)
         finally:
             try:
-                self.task_ids[service].remove(future)
+                self.task_ids[service].remove(id)
             except:
                 pass
 
@@ -293,6 +300,17 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
         self.wfile.write(str(path).encode("utf8"))
     '''
 
+    def call_naoqi(self, proxy, call):
+        global naoqi
+
+        if(len(call) == 0):
+            return "Error: call is empty"
+        elif proxy == "NaoQIManager": #call NaoQIManager directly
+            name, args = call[0], call[1:]
+            return getattr(naoqi, name)(*args)
+        else:
+            return naoqi.call(proxy, call)
+
     def do_HEAD(self):
         self._set_headers()
 
@@ -313,7 +331,7 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
 
           # forward the call to global naoqi
           global naoqi
-          result = naoqi.call(msg['proxy'], msg['call'])
+          result = self.call_naoqi(msg['proxy'], msg['call'])
 
           # sed a response
           self._set_headers()
@@ -339,14 +357,17 @@ class MyClass(GeneratedClass):
         global naoqi
         #naoqi = NaoQIManager(self.session(), self.logger)
         naoqi = NaoQIManagerProxy(self.session(), self.logger)
-        #print_methods(self.session(), self.logger)
 
+        '''
+        # experimental
         try:
+            #print_methods(self.session(), self.logger)
             self.idNaoQIManager = self.session().registerService("NaoQIManager", naoqi)
-        except ex:
+            self.logger.error("[RemoteControlServer] register NaoQIManager")
+        except Exception as ex:
             self.logger.error("[RemoteControlServer] could not register service NaoQIManager")
             #print_methods(self.session().service("NaoQIManager"), self.logger)
-
+        '''
         #global globalLogger
         #globalLogger = self.logger
 
@@ -362,10 +383,14 @@ class MyClass(GeneratedClass):
         global naoqi
         naoqi.stopAll()
 
+        '''
+        # experimental
         try:
             self.session().unregisterService(self.idNaoQIManager)
+            self.logger.error("[RemoteControlServer] unregister NaoQIManager")
         except:
             self.logger.error("[RemoteControlServer] could not unregister NaoQIManager")
+        '''
 
         t = threading.Thread(target=self.server.shutdown)
         self.logger.info("[RemoteControlServer] onUnload: Shutting down server ... ")
