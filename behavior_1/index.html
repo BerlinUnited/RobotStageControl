@@ -22,6 +22,13 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="./lib/jquery-3.5.1.slim.min.js"></script>
     
+    <style>
+      .arrowkey {
+        font-size: 2em;
+        font-weight: bold;
+        width: 2em;
+      }
+    </style>
   </head>
 
   <script>
@@ -195,6 +202,9 @@
     
       $("#container").height("" + ($(window).height() - 100) + "px");
     
+      // install key control
+      $("#keycontrol").click( (e) => {enableKeyControl(e);} );
+    
       // initialize the page content from a json file
       loadPageFromJson(pageData);
       
@@ -314,9 +324,6 @@
       ['MaxJerkTheta', 50.0], 
       ['TorsoWy', 0.17]
     ];
-    
-    window.addEventListener('keydown', doKeyDown, false);
-    window.addEventListener('keyup', doKeyUp, false);
 
     function doKeyDown(e)
     {
@@ -349,6 +356,7 @@
       
       lastCommandDone = false;
       send("ALMotion", ["moveToward", move_x, move_y, move_r, motionConfig], (e) => {lastCommandDone=true;} );
+      showKeyState();
     }
     
     function getTime() {
@@ -399,7 +407,52 @@
       */
     }
     
-    setInterval(processMove, 100);
+    function showKeyState() {
+      for(key in key_state) {
+        var button = $("#key_" + key);
+        button.removeClass(key_state[key] > 0?"btn-default":"btn-primary");
+        button.addClass(key_state[key] > 0?"btn-primary":"btn-default");
+      }
+    }
+    
+    var keyControlTimer;
+    
+    function enableKeyControl(e) 
+    {
+      window.addEventListener('keydown', doKeyDown, false);
+      window.addEventListener('keyup', doKeyUp, false);
+    
+      var button = $(e.target);
+      button.addClass("btn-danger");
+      button.removeClass("btn-primary");
+      button.text("Key Control On");
+      button.click( (e) => {disableKeyControl(e);} );
+      
+      keyControlTimer = setInterval(processMove, 100);
+      
+      for(key in key_state) {
+        $("#key_" + key).removeClass("disabled");
+      }
+    }
+    
+    function disableKeyControl(e) 
+    {
+      window.removeEventListener('keydown', doKeyDown, false);
+      window.removeEventListener('keyup', doKeyUp, false);
+      
+      clearInterval(keyControlTimer);
+      
+      var button = $(e.target);
+      button.removeClass("btn-danger");
+      button.addClass("btn-primary");
+      button.text("Key Control Off");
+      button.click( (e) => {enableKeyControl(e);} );
+      
+      // disable buttons
+      for(key in key_state) {
+        $("#key_" + key).addClass("disabled");
+      }
+    }
     
     
     // feature in progress: make sure we have a good connection
@@ -430,6 +483,7 @@
           <ul id="navbar-left" class="nav navbar-nav">
             <!--<li class="active"><a href="#">Home</a></li>-->
             <a class="btn btn-default btn-lg disabled" href="#" onclick="alert('blub'); return false">TEST</a>
+            <a class="btn btn-lg btn-primary" href="#" id="keycontrol">Key Control</a>
           </ul>
           
           <ul id="navbar-right" class="nav navbar-nav navbar-right">
@@ -449,49 +503,61 @@
       
       <div class="row">
       
+        <!-- left side -->
         <div class="col-md-6">
           <div id="container" class="row" style="overflow-y: auto;">
             
           </div>
         </div>
         
-        <!-- animations -->
+        <!-- right side -->
         <div class="col-md-6">
-          <div id="panel-animations" class="panel panel-success">
-            <div class="panel-heading">Animations</div>
-            <div class="panel-body" style="max-height: 50%; overflow-y: auto;" id="animations">
-              <!--<ul class="list-group" id="animations"><ul>-->
+          <div class="row" style="overflow-y: auto;">
+          
+            <!-- animations -->
+            <div class="col-md-12">
+              <div id="panel-animations" class="panel panel-success">
+                <div class="panel-heading">Animations</div>
+                <div class="panel-body" style="max-height: 50%; overflow-y: auto;" id="animations">
+                  <!--<ul class="list-group" id="animations"><ul>-->
+                </div>
+                <div class="panel-footer">
+                  <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="stopAll(); return false">
+                    <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP ALL TASKS
+                  </a></p>
+                </div>
+              </div>
             </div>
-            <div class="panel-footer">
-              <p><a id="animations_stop" class="btn btn-danger" href="#" role="button" onclick="stopAll(); return false">
-                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP ALL TASKS
-              </a></p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Move -->
-        <!--
-        <div class="col-md-6">
-          <div class="fixed-bottom">
-            <div class="panel panel-primary">
+          
+            <!-- Move -->
+            <div class="col-md-12">
+              <div class="panel panel-primary">
                 <div class="panel-heading">Move</div>
-                <div class="panel-body" style="max-height: 30em; overflow-y: auto;">
+                <div class="panel-body">
                   
-                  <div id="status1">Joystick: </div>
+                  <a id="key_l" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#8630;</a>
+                  <a id="key_up" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#11014;</a>
+                  <a id="key_r" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#8631;</a>
+                  <br/>
+                  <a id="key_left" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#11013;</a>
+                  <a id="key_down" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#11015;</a>
+                  <a id="key_right" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#10145;</a>
                   
+                  <!--<div id="status1">Joystick: </div>
                   <div style="border: 0px solid red; width: 128px; position: fixed; bottom: 50px; right: 50px;">
                     <img src="lib/JoystickController/images/joystick-base.png"/>
                     <div id="stick1" style="position: absolute; left:32px; top:32px;">
                       <img src="lib/JoystickController/images/joystick-red.png"/>		
                     </div>
                   </div>
-                  
+                  -->
                 </div>
               </div>
+            </div>
+          
           </div>
         </div>
-        -->
+        <!-- end right side -->
       
       </div><!-- /.row -->
       
