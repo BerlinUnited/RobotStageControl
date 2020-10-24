@@ -116,15 +116,16 @@
       sceneHtml = sceneHtml.replace(/{{title}}/ig, data['title']);
       
       var scene = $(sceneHtml);
+      var group_name = 'scenes';
       
       // create a button list
       var buttonList = $('<ul class="list-group"></ul>').appendTo($(".panel-body", scene));
       for(var e of data['items']) {
         var anchor = $('<a class="btn btn-default" href="#"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + '</a>')
-          .click(blockingActionsExecutor(e['actions'], 'scenes'));
+          .click(blockingActionsExecutor(e['actions'], group_name));
         
-        // HACK: ad too group manualy
-        buttonGroups['scenes'].push(anchor);
+        // HACK: add too group manualy
+        buttonGroups[group_name].push(anchor);
         
         $('<li class="list-group-item"></li>').append(anchor).appendTo(buttonList);
       }
@@ -146,14 +147,16 @@
     
     function loadAnimations(data) {
       var scene = $("#animations");
+      var group_name = 'scenes';//'animations';
 
       for(var e of data['items']) {
         var anchor = $('<a class="btn btn-default btn-lg" href="#" style="margin: 0.5em 0.5em;"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + ' </a> ')
-            .click(blockingActionsExecutor(e['actions'], 'animations'));
+            .click(blockingActionsExecutor(e['actions'], group_name));
         scene.append(anchor);
         
-        // HACK: ad too group manualy
-        buttonGroups['animations'].push(anchor);
+        // HACK: add too group manualy
+        //buttonGroups[group_name].push(anchor);
+        buttonGroups[group_name].push(anchor);
       }
     }
     
