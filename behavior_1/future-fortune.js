@@ -101,8 +101,7 @@ pageData =
 		},
 		{"type":"headline", "title":"5 Monologue", "items":[
 				{"type":"button", "title":"5.1 Monologue Speech", "actions":[
-					{"service":"ALTabletService", "call":["hide"]},
-					{"service":"ALAnimatedSpeech", "call":["say","\\pau=60000\\"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^call(ALTabletService.hide()) \\pau=60000\\"]}
 				]},
 				{"type":"button", "title":"5.2 Monologue Feel like you", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=purple ^run(animations/Stand/Emotions/Negative/Fear_2)"]}
@@ -123,7 +122,6 @@ pageData =
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=green ^run(animations/Stand/Waiting/PlayHands_2) \\pau=8000\\"]}
 				]},
 				{"type":"button", "title":"5.9 Monologue Speech", "actions":[
-					{"service":"ALTabletService", "call":["showImage","img/light_green.jpg"]},
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=light_green \\pau=60000\\"]}
 				]},
 				{"type":"button", "title":"5.10 Monologue Shoes", "actions":[
@@ -205,13 +203,10 @@ pageData =
 		},
 		{"type":"headline", "title":"10 5th Element", "items":[
 				{"type":"button", "title":"10.1 5th Element - LIGHT", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Reactions/LightShine_1)"]}
 				]},
 				{"type":"button", "title":"10.2 5th Element - MYSTIC", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
-				]},
-				{"type":"button", "title":"10.3 5th Element - LOW5", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/MysticalPower_1)"]}
 				]},
 				{"type":"button", "title":"10.4 5th Element - RITUAL", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
