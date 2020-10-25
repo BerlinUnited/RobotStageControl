@@ -218,7 +218,8 @@ pageData =
 		},
 		{"type":"headline", "title":"Animations", "items":[
 				{"type":"blocking", "title":"knight", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/Knight_1)"]}]},
-				{"type":"blocking", "title":"led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["say","^run(animations/LED/CircleEyes)"]}]},
+				{"type":"blocking", "title":"start led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
+				{"type":"blocking", "title":"stop led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["stopBehavior","animations/LED/CircleEyes"]}]},
 				{"type":"blocking", "title":"Wings_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Wings_1)"]}]},
 				{"type":"blocking", "title":"Wings_3", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Wings_3)"]}]},
 				{"type":"blocking", "title":"MysticalPower_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/MysticalPower_1)"]}]},
