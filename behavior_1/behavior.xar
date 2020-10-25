@@ -216,7 +216,6 @@ class NaoQIManagerProxy:
                     # dont crash if stop didn't work, just continue
                     try:
                         self.services_stop[service].stop(id)
-                        qdqdqdwqd()
                     except Exception as ex:
                         errors += [ex]
                         self.logger.warning(ex)
