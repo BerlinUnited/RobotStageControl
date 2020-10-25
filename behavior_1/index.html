@@ -149,8 +149,8 @@
       var scene = $("#animations");
       var group_name = 'scenes';//'animations';
 
-      for(var e of data['items']) {
-        var anchor = $('<a class="btn btn-default btn-lg" href="#" style="margin: 0.5em 0.5em;"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + ' </a> ')
+      for(var e of data['items']) {// btn-lg
+        var anchor = $('<a class="btn btn-default" href="#" style="margin: 0.5em 0.5em;"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + ' </a> ')
             .click(blockingActionsExecutor(e['actions'], group_name));
         scene.append(anchor);
         
