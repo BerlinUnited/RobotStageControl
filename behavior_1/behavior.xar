@@ -66,7 +66,8 @@ def _byteify(data, ignore_dicts = False):
 # global
 naoqi = None
 
-
+'''
+# experimental
 class NaoQIManager:
     def __init__(self, session, logger):
       self.session = session
@@ -177,7 +178,7 @@ class NaoQIManager:
                 pass
 
         return None
-
+'''
 
 class NaoQIManagerProxy:
     def __init__(self, session, logger):
