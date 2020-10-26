@@ -3,6 +3,7 @@ pageData =
 {
 	"note":"header kann auch gerne hardcoded sein; type ist in jedem Array der gleiche, der kann im Zweifel auch weggelassen werden",
 	"header":[
+    	//{"type":"non-blocking", "title":"Head left cool", "actions":[{"service":"ALTracker", "call":["lookAt",[0.1, 1.0, 1.6], 2, 1.0, false], "sync":true}],"color":"white"},
 		{"type":"non-blocking", "title":"Head left", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadLeft"]}],"color":"white"},
 		{"type":"non-blocking", "title":"Head center", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHead"]}],"color":"white"},
 		{"type":"non-blocking", "title":"Head right", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadRight"]}],"color":"white"},
@@ -53,7 +54,8 @@ pageData =
 		},
 		{"type":"headline", "title":"3 Rehearsal", "items":[
 				{"type":"button", "title":"3.1 Rehearsal", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Emotions/Negative/Disappointed_1) ^run(rur_rehearsal/text_1)"]}
+					//{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Emotions/Negative/Disappointed_1) ^run(rur_rehearsal/text_1)"]}
+          			{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Emotions/Negative/Disappointed_1) ^run(animations/Stand/Emotions/Neutral/Confused_1) \\pau=25000\\"]}
 				]},
 				{"type":"button", "title":"3.2 Rehearsal", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(rur_rehearsal/text_2)"]}
