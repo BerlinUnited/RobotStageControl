@@ -78,11 +78,28 @@
       }
     }
     
+    var colorsToClass = {
+      "white": "btn-default",
+      "yellow": "btn-warning",
+      "cyan": "btn-info",
+      "blue": "btn-primary",
+      "red": "btn-danger",
+      "green": "btn-success"
+    };
+    
+    function getClassForColor(color) {
+      /*
+      if(color in colorsToClass) {
+        return colorsToClass[color];
+      }*/
+      return "btn-default";
+    }
+    
     function loadHeader(data) {
       var navbar = $("#navbar-right");
 
       for(var e of data) {
-        var anchor = $('<a class="btn btn-default" href="#">' + e['title'] + '</a>')
+        var anchor = $('<a class="btn ' + getClassForColor(e['color']) + '" href="#">' + e['title'] + '</a>')
           .click( nonBlockingActionsExecutor(e['actions']) );
         
         // collect buttons to be blocked
@@ -472,7 +489,7 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul id="navbar-left" class="nav navbar-nav">
             <!--<li class="active"><a href="#">Home</a></li>-->
-            <a class="btn btn-default btn-lg disabled" href="#" onclick="alert('blub'); return false">TEST</a>
+            <!--<a class="btn btn-default btn-lg disabled" href="#" onclick="alert('blub'); return false">TEST</a>-->
           </ul>
           
           <ul id="navbar-right" class="nav navbar-nav navbar-right">
