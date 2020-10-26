@@ -210,9 +210,9 @@ pageData =
 				{"type":"button", "title":"10.2 5th Element - MYSTIC", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/MysticalPower_1)"]}
 				]},
-				{"type":"button", "title":"10.4 5th Element - RITUAL", "actions":[
+/*				{"type":"button", "title":"10.4 5th Element - RITUAL", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
-				]},
+				]},*/
 				{"type":"button", "title":"10.5 5th Element - Speaking Motion", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black \\pau=60000\\ "]}
 				]}
