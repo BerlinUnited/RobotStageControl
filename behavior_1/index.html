@@ -212,8 +212,14 @@
     
       $("#container").height("" + ($(window).height() - 100) + "px");
     
-      // install key control
-      $("#keycontrol").click( (e) => {enableKeyControl(e);} );
+      // experimental: install key control
+      //$("#keycontrol").click( (e) => {enableKeyControl(e);} );
+      
+      //manually enable key control
+      window.addEventListener('keydown', doKeyDown, false);
+      window.addEventListener('keyup', doKeyUp, false);
+      keyControlTimer = setInterval(processMove, 100);
+      
     
       // initialize the page content from a json file
       loadPageFromJson(pageData);
@@ -525,8 +531,8 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul id="navbar-left" class="nav navbar-nav">
             <!--<li class="active"><a href="#">Home</a></li>-->
-            <a class="btn btn-default btn-lg disabled" href="#" onclick="alert('blub'); return false">TEST</a>
-            <a class="btn btn-lg btn-primary" href="#" id="keycontrol">Key Control</a>
+            <!--<a class="btn btn-default btn-lg disabled" href="#" onclick="alert('blub'); return false">TEST</a>-->
+            <!--<a class="btn btn-lg btn-primary" href="#" id="keycontrol">Key Control</a>-->
           </ul>
           
           <ul id="navbar-right" class="nav navbar-nav navbar-right">
