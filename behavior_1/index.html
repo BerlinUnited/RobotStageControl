@@ -88,18 +88,18 @@
     };
     
     function getClassForColor(color) {
-      /*
+      
       if(color in colorsToClass) {
         return colorsToClass[color];
-      }*/
+      }
       return "btn-default";
     }
     
     function loadHeader(data) {
       var navbar = $("#navbar-right");
 
-      for(var e of data) {
-        var anchor = $('<a class="btn ' + getClassForColor(e['color']) + '" href="#">' + e['title'] + '</a>')
+      for(var e of data) { // style="color:black;"
+        var anchor = $('<a class="btn ' + getClassForColor(e['color']) + '"  style="color:black;" href="#">' + e['title'] + '</a>')
           .click( nonBlockingActionsExecutor(e['actions']) );
         
         // collect buttons to be blocked
@@ -474,7 +474,7 @@
   <body onload="init()">
 
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
+    <nav class="navbar navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
