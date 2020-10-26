@@ -3,6 +3,7 @@ pageData =
 {
 	"note":"header kann auch gerne hardcoded sein; type ist in jedem Array der gleiche, der kann im Zweifel auch weggelassen werden",
 	"header":[
+    	//{"type":"non-blocking", "title":"Head left cool", "actions":[{"service":"ALTracker", "call":["lookAt",[0.1, 1.0, 1.6], 2, 1.0, false], "sync":true}],"color":"white"},
 		{"type":"non-blocking", "title":"Head left", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadLeft"]}],"color":"white"},
 		{"type":"non-blocking", "title":"Head center", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHead"]}],"color":"white"},
 		{"type":"non-blocking", "title":"Head right", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadRight"]}],"color":"white"},
@@ -53,7 +54,8 @@ pageData =
 		},
 		{"type":"headline", "title":"3 Rehearsal", "items":[
 				{"type":"button", "title":"3.1 Rehearsal", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Emotions/Negative/Disappointed_1) ^run(rur_rehearsal/text_1)"]}
+					//{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Emotions/Negative/Disappointed_1) ^run(rur_rehearsal/text_1)"]}
+          			{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(animations/Stand/Emotions/Negative/Disappointed_1) ^run(animations/Stand/Emotions/Neutral/Confused_1) \\pau=25000\\"]}
 				]},
 				{"type":"button", "title":"3.2 Rehearsal", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=white ^run(rur_rehearsal/text_2)"]}
@@ -208,35 +210,35 @@ pageData =
 				{"type":"button", "title":"10.2 5th Element - MYSTIC", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/MysticalPower_1)"]}
 				]},
-				{"type":"button", "title":"10.4 5th Element - RITUAL", "actions":[
+/*				{"type":"button", "title":"10.4 5th Element - RITUAL", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","^run(ritual_novoice/behavior_1)"]}
-				]},
+				]},*/
 				{"type":"button", "title":"10.5 5th Element - Speaking Motion", "actions":[
 					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black \\pau=60000\\ "]}
 				]}
 			]
 		},
 		{"type":"headline", "title":"Animations", "items":[
-				{"type":"blocking", "title":"knight", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/Knight_1"]}]},
+				{"type":"blocking", "title":"knight", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/Knight_1)"]}]},
 				{"type":"blocking", "title":"start led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
 				{"type":"blocking", "title":"stop led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["stopBehavior","animations/LED/CircleEyes"]}]},
-				{"type":"blocking", "title":"Wings_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Wings_1"]}]},
-				{"type":"blocking", "title":"Wings_3", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Wings_3"]}]},
-				{"type":"blocking", "title":"MysticalPower_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/MysticalPower_1"]}]},
-				{"type":"blocking", "title":"Relaxation_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/Relaxation_2"]}]},
-				{"type":"blocking", "title":"ShowMuscles_3", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/ShowMuscles_3"]}]},
-				{"type":"blocking", "title":"ShowSky_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/ShowSky_1"]}]},
-				{"type":"blocking", "title":"Stretch_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Waiting/Stretch_2"]}]},
-				{"type":"blocking", "title":"ShakeBody_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/ShakeBody_2"]}]},
-				{"type":"blocking", "title":"SeeColor_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/SeeColor_1"]}]},
-				{"type":"blocking", "title":"LightShine_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/LightShine_1"]}]},
-				{"type":"blocking", "title":"WhatSThis_6", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/WhatSThis_6"]}]},
-				{"type":"blocking", "title":"YouKnowWhat_4", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/YouKnowWhat_4"]}]},
-				{"type":"blocking", "title":"YouKnowWhat_5", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/YouKnowWhat_5"]}]},
-				{"type":"blocking", "title":"You_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/You_2"]}]},
-				{"type":"blocking", "title":"EthernetOn_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Reactions/EthernetOn_1"]}]},
-				{"type":"blocking", "title":"Hey_2", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_2"]}]},
-				{"type":"blocking", "title":"Hey_1", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/Stand/Gestures/Hey_1"]}]},
+				{"type":"blocking", "title":"Wings_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Wings_1)"]}]},
+				{"type":"blocking", "title":"Wings_3", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Wings_3)"]}]},
+				{"type":"blocking", "title":"MysticalPower_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/MysticalPower_1)"]}]},
+				{"type":"blocking", "title":"Relaxation_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/Relaxation_2)"]}]},
+				{"type":"blocking", "title":"ShowMuscles_3", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/ShowMuscles_3)"]}]},
+				{"type":"blocking", "title":"ShowSky_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/ShowSky_1)"]}]},
+				{"type":"blocking", "title":"Stretch_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/Stretch_2)"]}]},
+				{"type":"blocking", "title":"ShakeBody_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Reactions/ShakeBody_2)"]}]},
+				{"type":"blocking", "title":"SeeColor_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Reactions/SeeColor_1)"]}]},
+				{"type":"blocking", "title":"LightShine_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Reactions/LightShine_1)"]}]},
+				{"type":"blocking", "title":"WhatSThis_6", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/WhatSThis_6)"]}]},
+				{"type":"blocking", "title":"YouKnowWhat_4", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/YouKnowWhat_4)"]}]},
+				{"type":"blocking", "title":"YouKnowWhat_5", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/YouKnowWhat_5)"]}]},
+				{"type":"blocking", "title":"You_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/You_2)"]}]},
+				{"type":"blocking", "title":"EthernetOn_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Reactions/EthernetOn_1)"]}]},
+				{"type":"blocking", "title":"Hey_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Hey_2)"]}]},
+				{"type":"blocking", "title":"Hey_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Hey_1)"]}]},
 				{"type":"blocking", "title":"ThinkingLoop_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/BodyTalk/Thinking/ThinkingLoop_1)"]}]},
 				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/BodyTalk/Thinking/ThinkingLoop_2)"]}]},
 				{"type":"blocking", "title":"Speaking Motion", "actions":[{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black \\pau=60000\\ "]}]}

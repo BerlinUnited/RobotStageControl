@@ -38,10 +38,10 @@
         <File name="joy" src="behavior_1/lib/joy/joy.html" />
         <File name="joy" src="behavior_1/lib/joy/joy.js" />
         <File name="test" src="behavior_1/test.html" />
+        <File name="naoth-16" src="behavior_1/img/naoth-16.png" />
+        <File name="naoth-32" src="behavior_1/img/naoth-32.png" />
+        <File name="naoth-96" src="behavior_1/img/naoth-96.png" />
     </Resources>
     <Topics />
     <IgnoredPaths />
-    <Translations auto-fill="en_US">
-        <Translation name="translation_en_US" src="translations/translation_en_US.ts" language="en_US" />
-    </Translations>
 </Package>

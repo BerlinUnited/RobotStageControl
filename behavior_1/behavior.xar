@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Python Script" id="1" localization="8" tooltip="This box contains a basic python script and can be used to create any python script box you would like.&#x0A;&#x0A;To edit its script, double-click on it." x="334" y="43"><bitmap>media/images/box/box-python-script.png</bitmap><script language="4"><content><![CDATA[from __future__ import print_function
+<?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Python Script" id="1" localization="8" tooltip="This box contains a basic python script and can be used to create any python script box you would like.&#x0A;&#x0A;To edit its script, double-click on it." x="264" y="42"><bitmap>media/images/box/box-python-script.png</bitmap><script language="4"><content><![CDATA[from __future__ import print_function
 
 try:
     import __builtin__
@@ -66,7 +66,8 @@ def _byteify(data, ignore_dicts = False):
 # global
 naoqi = None
 
-
+'''
+# experimental
 class NaoQIManager:
     def __init__(self, session, logger):
       self.session = session
@@ -177,7 +178,7 @@ class NaoQIManager:
                 pass
 
         return None
-
+'''
 
 class NaoQIManagerProxy:
     def __init__(self, session, logger):
@@ -204,30 +205,37 @@ class NaoQIManagerProxy:
 
         return self.services[service]
 
-    @qi.bind(paramsType=(), methodName="stopAll")
+    # experimental: service
+    #@qi.bind(paramsType=(), methodName="stopAll")
     def stopAll(self):
         self.logger.info("[NaoQIManager] stopAll Proxy")
-
+        errors = []
         n = 0
         for service in self.task_ids:
             if service != "NaoQIManager":
                 for id in self.task_ids[service]:
-                    self.services_stop[service].stop(id)
+                    # dont crash if stop didn't work, just continue
+                    try:
+                        self.services_stop[service].stop(id)
+                    except Exception as ex:
+                        errors += [ex]
+                        self.logger.warning(ex)
                     n += 1
                 self.task_ids[service] = []
 
-        return "stopAll canceled {} tasks".format(n)
+        return "stopAll canceled {} tasks\n {}".format(n, errors)
 
     # make a call to a service
-    def call(self, service, call):
+    def call(self, service, call, sync):
         try:
-            self.logger.info("call {}({})".format(service, call))
-
-            proxy = self.getService(service)
+            self.logger.info("call[sync = {}] {}({})".format(sync, service, call))
             name, args = call[0], call[1:]
 
+            proxy = self.getService(service)
+
             # hack: synchronized call for the motion
-            if service == "ALMotion":
+
+            if service == "ALMotion" or sync:
                 return getattr(proxy, name)(*args)
 
             # run commandy asynchronius
@@ -244,10 +252,10 @@ class NaoQIManagerProxy:
         except Exception as ex:
             self.logger.warning(ex)
             self.logger.warning("[NaoQIManager] {} execution canceled".format(name))
-            return "{}: execution canceled".format(name)
+            return "{}.{}: execution canceled".format(service,name)
         finally:
             try:
-                self.task_ids[service].remove(future)
+                self.task_ids[service].remove(id)
             except:
                 pass
 
@@ -293,6 +301,17 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
         self.wfile.write(str(path).encode("utf8"))
     '''
 
+    def call_naoqi(self, proxy, call, sync):
+        global naoqi
+
+        if(len(call) == 0):
+            return "Error: call is empty"
+        elif proxy == "NaoQIManager": #call NaoQIManager directly
+            name, args = call[0], call[1:]
+            return getattr(naoqi, name)(*args)
+        else:
+            return naoqi.call(proxy, call, sync)
+
     def do_HEAD(self):
         self._set_headers()
 
@@ -313,7 +332,7 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
 
           # forward the call to global naoqi
           global naoqi
-          result = naoqi.call(msg['proxy'], msg['call'])
+          result = self.call_naoqi(msg['service'], msg['call'], 'sync' in msg)
 
           # sed a response
           self._set_headers()
@@ -339,14 +358,17 @@ class MyClass(GeneratedClass):
         global naoqi
         #naoqi = NaoQIManager(self.session(), self.logger)
         naoqi = NaoQIManagerProxy(self.session(), self.logger)
-        #print_methods(self.session(), self.logger)
 
+        '''
+        # experimental
         try:
+            #print_methods(self.session(), self.logger)
             self.idNaoQIManager = self.session().registerService("NaoQIManager", naoqi)
-        except ex:
+            self.logger.error("[RemoteControlServer] register NaoQIManager")
+        except Exception as ex:
             self.logger.error("[RemoteControlServer] could not register service NaoQIManager")
             #print_methods(self.session().service("NaoQIManager"), self.logger)
-
+        '''
         #global globalLogger
         #globalLogger = self.logger
 
@@ -362,10 +384,14 @@ class MyClass(GeneratedClass):
         global naoqi
         naoqi.stopAll()
 
+        '''
+        # experimental
         try:
             self.session().unregisterService(self.idNaoQIManager)
+            self.logger.error("[RemoteControlServer] unregister NaoQIManager")
         except:
             self.logger.error("[RemoteControlServer] could not unregister NaoQIManager")
+        '''
 
         t = threading.Thread(target=self.server.shutdown)
         self.logger.info("[RemoteControlServer] onUnload: Shutting down server ... ")

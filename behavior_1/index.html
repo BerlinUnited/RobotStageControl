@@ -7,6 +7,10 @@
     
     <!-- <link rel="icon" href="../../favicon.ico"> -->
     <link rel="canonical" href=".">
+    
+    <link rel="icon" href="img/naoth-16.png" sizes="16x16">
+    <link rel="icon" href="img/naoth-32.png" sizes="32x32">
+    <link rel="icon" href="img/naoth-96.png" sizes="96x96">
 
     <title>Robot Stage Control</title>
     
@@ -52,7 +56,8 @@
         //$(event.target).addClass("btn-danger");
       
         // send all actions
-        actions.forEach(({service, call}) => send(service, call, (result) => {
+        //actions.forEach(({service, call}) => send(service, call, (result) => {
+        actions.forEach((data) => sendJSON(data, (result) => {
           // for debug
           //console.log(result);
           //console.log("release: " + groupName)
@@ -69,7 +74,8 @@
     function nonBlockingActionsExecutor(actions) {
       return (event) => {
         // send all actions
-        actions.forEach(({service, call}) => send(service, call, (result) => { 
+        //actions.forEach(({service, call}) => send(service, call, (result) => { 
+        actions.forEach((data) => sendJSON(data, (result) => {
           // for debug
           //console.log(result);
         }));
@@ -123,15 +129,16 @@
       sceneHtml = sceneHtml.replace(/{{title}}/ig, data['title']);
       
       var scene = $(sceneHtml);
+      var group_name = 'scenes';
       
       // create a button list
       var buttonList = $('<ul class="list-group"></ul>').appendTo($(".panel-body", scene));
       for(var e of data['items']) {
         var anchor = $('<a class="btn btn-default" href="#"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + '</a>')
-          .click(blockingActionsExecutor(e['actions'], 'scenes'));
+          .click(blockingActionsExecutor(e['actions'], group_name));
         
-        // HACK: ad too group manualy
-        buttonGroups['scenes'].push(anchor);
+        // HACK: add too group manualy
+        buttonGroups[group_name].push(anchor);
         
         $('<li class="list-group-item"></li>').append(anchor).appendTo(buttonList);
       }
@@ -153,14 +160,16 @@
     
     function loadAnimations(data) {
       var scene = $("#animations");
+      var group_name = 'scenes';//'animations';
 
-      for(var e of data['items']) {
-        var anchor = $('<a class="btn btn-default btn-lg" href="#" style="margin: 0.5em 0.5em;"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + ' </a> ')
-            .click(blockingActionsExecutor(e['actions'], 'animations'));
+      for(var e of data['items']) {// btn-lg
+        var anchor = $('<a class="btn btn-default" href="#" style="margin: 0.5em 0.5em;"><span class="glyphicon glyphicon-play"></span> ' + e['title'] + ' </a> ')
+            .click(blockingActionsExecutor(e['actions'], group_name));
         scene.append(anchor);
         
-        // HACK: ad too group manualy
-        buttonGroups['animations'].push(anchor);
+        // HACK: add too group manualy
+        //buttonGroups[group_name].push(anchor);
+        buttonGroups[group_name].push(anchor);
       }
     }
     
@@ -198,6 +207,7 @@
       $("#container").height("" + ($(window).height() - 100) + "px");
     });
   
+    /* INITIALIZE */
     function init() {
     
       $("#container").height("" + ($(window).height() - 100) + "px");
@@ -209,9 +219,9 @@
       loadPageFromJson(pageData);
       
       // show motion config
-      send("ALMotion", ["getMoveConfig", "Default"], (result)=>console.log(result) );
-      send("ALMotion", ["getMoveConfig", "Max"], (result)=>console.log(result) );
-      send("ALMotion", ["getMoveConfig", "Min"], (result)=>console.log(result) );
+      send("ALMotion", ["getMoveConfig", "Min"]    , (result)=>console.log("[MoveConfig:Min]     = " + result) );
+      send("ALMotion", ["getMoveConfig", "Max"]    , (result)=>console.log("[MoveConfig:Max]     = " + result) );
+      send("ALMotion", ["getMoveConfig", "Default"], (result)=>console.log("[MoveConfig:Default] = " + result) );
     }
     
     // runBehavior
@@ -241,20 +251,29 @@
     function say_stop(message) { send("ALTextToSpeech", ["stopAll"]); }
     
     function send(proxy, call, handler) {
-      var xhr = new XMLHttpRequest();
-
-      var data = JSON.stringify({
-        "proxy": proxy,
+      sendJSON(
+      {
+        "service": proxy,
         "call": call
-      });
-      console.log(data);
+      }, handler);
+    }
+    
+    function sendJSON(json, handler) {
+      sendData(JSON.stringify(json), handler);
+    }
+    
+    // sends data to robot
+    function sendData(data, handler) 
+    {
+      console.log("[send] " + data);
       
+      var xhr = new XMLHttpRequest();
       xhr.open("POST", "naoqi", true);
       
       xhr.onload = function (e) {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
-            console.log(xhr.responseText);
+            console.log("[response] " + xhr.responseText);
             
             if(typeof handler !== "undefined") {
               handler(xhr.responseText);
@@ -305,15 +324,39 @@
     var speedTurn     = 1.0;
     
     /*
-    var motionConfig = [
-      ['MaxVelXY', 0.4], 
+    var motionConfigDefault = [
+      ['MaxVelXY', 0.3499999940395355], 
       ['MaxVelTheta', 1.0], 
-      ['MaxAccXY', 0.45], 
-      ['MaxAccTheta', 2.0], 
-      ['MaxJerkXY', 3.0], 
-      ['MaxJerkTheta', 20.0], 
-      ['TorsoWy', 0.1]
+      ['MaxAccXY', 0.30000001192092896], 
+      ['MaxAccTheta', 0.75], 
+      ['MaxJerkXY', 1.0], 
+      ['MaxJerkTheta', 2.0], 
+      ['TorsoWy', 0.0]
     ];*/
+    
+    /*
+    // max settings:
+    var motionConfigMax = [
+      ['MaxVelXY', 0.550000011920929], 
+      ['MaxVelTheta', 2.0], 
+      ['MaxAccXY', 0.550000011920929], 
+      ['MaxAccTheta', 3.0], 
+      ['MaxJerkXY', 5.0], 
+      ['MaxJerkTheta', 50.0], 
+      ['TorsoWy', 0.1745329201221466]
+    ];
+    
+    // min settings on pepper
+    var motionConfigMin = [
+      ['MaxVelXY', 0.10000000149011612], 
+      ['MaxVelTheta', 0.20000000298023224], 
+      ['MaxAccXY', 0.10000000149011612], 
+      ['MaxAccTheta', 0.10000000149011612], 
+      ['MaxJerkXY', 0.20000000298023224], 
+      ['MaxJerkTheta', 0.20000000298023224], 
+      ['TorsoWy', -0.1745329201221466]
+    ]
+    */
     
     var motionConfig = [
       ['MaxVelXY', 0.4], 
@@ -322,7 +365,7 @@
       ['MaxAccTheta', 3.0], 
       ['MaxJerkXY', 5.0],
       ['MaxJerkTheta', 50.0], 
-      ['TorsoWy', 0.17]
+      ['TorsoWy', 0.174]
     ];
 
     function doKeyDown(e)
@@ -476,7 +519,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Future Fortune Stage Control</a>
+          <a class="navbar-brand" href="#">Stage Control V1.3</a>
         </div>
         
         <div id="navbar" class="navbar-collapse collapse">

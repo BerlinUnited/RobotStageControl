@@ -77,8 +77,9 @@
       var xhr = new XMLHttpRequest();
 
       var data = JSON.stringify({
-        "proxy": proxy,
-        "call": call
+        "service": proxy,
+        "call": call,
+        "sync": true
       });
       console.log(data);
       
@@ -274,7 +275,7 @@
         </div>
       </div>
       
-      
+      <!--
       <div class="panel panel-primary">
         <div class="panel-heading">Move</div>
         <div class="panel-body" style="max-height: 30em; overflow-y: auto;">
@@ -285,7 +286,7 @@
           
         </div>
       </div>
-      
+      -->
   
       </div><!-- /.row -->
     </div><!-- /.container -->
