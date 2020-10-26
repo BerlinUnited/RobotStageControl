@@ -364,15 +364,12 @@
     ]
     */
     
-    var motionConfig = [
-      ['MaxVelXY', 0.4], 
-      ['MaxVelTheta', 1.0], 
-      ['MaxAccXY', 0.55], 
-      ['MaxAccTheta', 3.0], 
-      ['MaxJerkXY', 5.0],
-      ['MaxJerkTheta', 50.0], 
-      ['TorsoWy', 0.174]
-    ];
+    var motionConfig = {
+      "speed_slow"   : [ ['MaxVelXY', 0.2], ['MaxVelTheta', 0.4], ['MaxAccXY', 0.35], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', 0    ] ],
+      "speed_normal" : [ ['MaxVelXY', 0.3], ['MaxVelTheta', 0.6], ['MaxAccXY', 0.45], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', 0.1  ] ],
+      "speed_fast"   : [ ['MaxVelXY', 0.4], ['MaxVelTheta', 1.0], ['MaxAccXY', 0.55], ['MaxAccTheta', 3.0], ['MaxJerkXY', 5.0], ['MaxJerkTheta', 50.0], ['TorsoWy', 0.174] ]
+    };
+      
 
     function doKeyDown(e)
     {
@@ -398,13 +395,19 @@
     var timeStampLastMoveCommand = 0;
     var lastCommandDone = true;
     
+    function getConfig() {
+      var selected_speed = $("input[name='move_speed']:checked").val();
+      console.log(selected_speed);
+      return motionConfig[selected_speed];
+    }
+    
     function sendMotionCommand() {
       var move_x = key_state["up"]   * speedForward - key_state["down"]  * speedBackward;
       var move_y = key_state["l"]    * speedStrave  - key_state["r"]     * speedStrave;
       var move_r = key_state["left"] * speedTurn    - key_state["right"] * speedTurn;
       
       lastCommandDone = false;
-      send("ALMotion", ["moveToward", move_x, move_y, move_r, motionConfig], (e) => {lastCommandDone=true;} );
+      send("ALMotion", ["moveToward", move_x, move_y, move_r, getConfig()], (e) => {lastCommandDone=true;} );
       showKeyState();
     }
     
@@ -581,7 +584,21 @@
             <!-- Move -->
             <div class="col-md-12">
               <div class="panel panel-primary">
-                <div class="panel-heading">Move</div>
+                <div class="panel-heading">
+                  <span>Move</span>
+                  <span>
+                    <span>Speed: </span>
+                    <label class="radio-inline">
+                      <input type="radio" name="move_speed" id="move_slow" value="speed_slow"> slow
+                    </label>
+                    <label class="radio-inline">
+                      <input type="radio" name="move_speed" id="move_normal" value="speed_normal"> normal
+                    </label>
+                    <label class="radio-inline">
+                      <input type="radio" name="move_speed" id="move_fast" value="speed_fast" checked="checked"> fast
+                    </label>
+                  </span>
+                </div>
                 <div class="panel-body">
                   
                   <a id="key_l" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#8630;</a>
