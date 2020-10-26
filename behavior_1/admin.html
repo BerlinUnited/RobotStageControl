@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- <link rel="icon" href="../../favicon.ico"> -->
+    <link rel="canonical" href=".">
+    
+    <link rel="icon" href="img/naoth-16.png" sizes="16x16">
+    <link rel="icon" href="img/naoth-32.png" sizes="32x32">
+    <link rel="icon" href="img/naoth-96.png" sizes="96x96">
+
+    <title>Robot Stage Control</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="lib/bootstrap-3.4.1/css/bootstrap.min.css" >
+    <!--<link rel="stylesheet" href="./lib/bootstrap-3.4.1/css/bootstrap-theme.min.css" > -->
+    
+    <script src="future-fortune.js"></script>
+    <!-- Optional Bootstrap Theme -->
+    
+    <script src="lib/JoystickController/JoystickController.js"></script>
+    
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./lib/jquery-3.5.1.slim.min.js"></script>
+    
+  </head>
+
+  
+  <script>
+
+    function sendCoontent() {
+      var content = $("#content").val();
+      var file = $("#filename").val();
+
+      send("admin", {"action":"write", "file": file, "content": content}, (result)=>{
+        console.log("[admin] = " + result);
+        alert("send status: " + result);
+      });
+    }
+  
+    /* INITIALIZE */
+    function init() {
+
+    }
+
+    function send(proxy, call, handler, error_handler) {
+      sendJSON(
+      {
+        "service": proxy,
+        "call": call
+      }, handler, error_handler);
+    }
+    
+    function sendJSON(json, handler, error_handler) {
+      console.log(content)
+      sendData(JSON.stringify(json), handler, error_handler);
+    }
+    
+    // sends data to robot
+    function sendData(data, handler, error_handler) 
+    {
+      console.log("[send] " + data);
+      
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", "naoqi", true);
+      
+      xhr.onload = function (e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            console.log("[response] " + xhr.responseText);
+            
+            if(typeof handler !== "undefined") {
+              handler(xhr.responseText);
+            }
+          } else {
+            console.error(xhr.statusText);
+          }
+        }
+      };
+      
+      xhr.onerror = function (e) {
+        //console.error(e);
+        //console.error(xhr.statusText);
+        
+        // also call the handler in case of error
+        if(typeof error_handler !== "undefined") {
+          error_handler(xhr.statusText);
+        } else if(typeof handler !== "undefined") {
+          handler(xhr.statusText);
+        }
+      };
+      
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(data); 
+    }
+    </script>
+
+  <body onload="init()">
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">ADMIN Stage Control V1.4</a>
+        </div>
+        
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul id="navbar-left" class="nav navbar-nav">
+            <!--<li class="active"><a href="#">Home</a></li>-->
+          </ul>
+          
+          <ul id="navbar-right" class="nav navbar-nav navbar-right">
+            <!--<li><a href="#" onclick="auto_mode('MoveContextually'); say('MoveContextually'); return false">MoveContextually</a></li>-->
+            <span>File Name: <input type="text" style="font-family:monospace" rows="1" cols="100" id="filename" name="user_input"></input></span>
+            <a id="button_send" class="btn btn-danger" href="#" role="button" onclick="sendCoontent(); return false">
+              <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Send
+            </a>
+          </ul>
+          
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    
+    
+    <div class="container-fluid">
+    
+      <div class="page-header">
+        <h1></h1>
+      </div>
+      
+      <div class="row">
+      
+        <!-- animations -->
+        <div class="col-md-12">
+          <div id="panel-content" class="panel panel-default">
+            <div class="panel-heading">Content</div>
+            <div class="panel-body">
+              <textarea rows="60" style="font-family:monospace; width:100%; min-height:100%; height:100%; max-height:100%;" id="content"></textarea>
+            </div>
+            <div class="panel-footer">
+              <p></p>
+            </div>
+          </div>
+        </div>
+        
+      </div><!-- /.row -->
+      
+    </div><!-- /.container -->
+    
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!--<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>-->
+    <script src="./lib/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

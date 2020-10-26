@@ -251,8 +251,8 @@ class NaoQIManagerProxy:
 
         except Exception as ex:
             self.logger.warning(ex)
-            self.logger.warning("[NaoQIManager] {} execution canceled".format(name))
-            return "{}.{}: execution canceled".format(service,name)
+            self.logger.warning("[NaoQIManager] {} execution canceled".format(service))
+            return "{}: execution canceled with exception {}".format(service, ex)
         finally:
             try:
                 self.task_ids[service].remove(id)
@@ -312,10 +312,23 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
         else:
             return naoqi.call(proxy, call, sync)
 
+    def call_admin(self, msg):
+        global naoqi
+        naoqi.logger.info(msg)
+
+        call = msg['call']
+        if call["action"] == "write" and "file" in call and "content" in call:
+            with open(call["file"], 'w') as outfile:
+                outfile.write(call["content"])
+
+        return "Done!"
+
     def do_HEAD(self):
         self._set_headers()
 
     def do_POST(self):
+        global naoqi
+
         try:
           # get the length of the data to read
           # python 2.7
@@ -328,11 +341,13 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
 
           # parse json data as ascii
           msg = json.loads(data, object_hook=_byteify)
-          print(msg)
+          #naoqi.logger.log(msg)
 
-          # forward the call to global naoqi
-          global naoqi
-          result = self.call_naoqi(msg['service'], msg['call'], 'sync' in msg)
+          if msg['service'] == 'admin':
+              result = self.call_admin(msg)
+          else:
+              # forward the call to global naoqi
+              result = self.call_naoqi(msg['service'], msg['call'], 'sync' in msg)
 
           # sed a response
           self._set_headers()
@@ -341,7 +356,7 @@ class NaoQiHandler(SimpleHTTPRequestHandler):
         except Exception:
           self._set_headers()
           trace = traceback.format_exc()
-          print(trace)
+          naoqi.logger.warning(trace)
           self.wfile.write(str(trace).encode("utf8"))
 
     def log_message(self, format, *args):
