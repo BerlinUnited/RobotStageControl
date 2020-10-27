@@ -41,6 +41,7 @@
         <File name="naoth-16" src="behavior_1/img/naoth-16.png" />
         <File name="naoth-32" src="behavior_1/img/naoth-32.png" />
         <File name="naoth-96" src="behavior_1/img/naoth-96.png" />
+        <File name="admin" src="behavior_1/admin.html" />
     </Resources>
     <Topics />
     <IgnoredPaths />
