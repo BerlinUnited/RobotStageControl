@@ -244,6 +244,14 @@ pageData =
 			]
 		},
 		{"type":"headline", "title":"Animations", "items":[
+				//{"type":"blocking", "title":"ALGET", "actions":[{"service":"ALAutonomousLife", "call":["getState"], "sync":true}]},
+				//{"type":"blocking", "title":"ALGETTracking", "actions":[{"service":"ALBasicAwareness", "call":["getTrackingMode"], "sync":true}]},
+				//{"type":"blocking", "title":"ALOFF", "actions":[{"service":"ALAutonomousLife", "call":["setState", "disabled"]}]},
+				//{"type":"blocking", "title":"Autonomous Life Normal", "actions":[{"service":"ALAutonomousLife", "call":["setState", "solitary"]}], "color":"yellow"},
+				//{"type":"blocking", "title":"Autonomous Life Aktiv", "actions":[
+				//{"service":"ALAutonomousLife", "call":["setState", "interactive"], "sync":true}], "color":"yellow"},
+				//{"type":"blocking", "title":"Set Tracking", "actions":[{"service":"ALBasicAwareness", "call":["setTrackingMode", "Head"]}], "color":"yellow"},
+
 				{"type":"blocking", "title":"EYES - OFF", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","off"]}]},
 				{"type":"blocking", "title":"EYES - PURPLE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes", 0x009900FF]}]},
 				{"type":"blocking", "title":"EYES - BLUE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","blue"]}]},
@@ -255,13 +263,13 @@ pageData =
 				{"type":"blocking", "title":"EYES - RANDOM", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","random"]}]},
 				{"type":"blocking", "title":"EYES - BLINK", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","blink"]}]},
 				{"type":"blocking", "title":"EYES - TWINKLE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","twinkle"]}]},
-				{"type":"blocking", "title":"EYES - ROTATE", "actions":[{"service":"ALLeds", "call":["rotateEyes",0x00FF0099,1,10]}]},
-				{"type":"blocking", "title":"EYES - RASTA", "actions":[{"service":"ALLeds", "call":["rasta",10]}]},
-				{"type":"blocking", "title":"EYES - RND", "actions":[{"service":"ALLeds", "call":["randomEyes",10]}]},
-{"type":"blocking", "title":"Wakeup", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/WakeUp_1)"]}]},
-				
+				//{"type":"blocking", "title":"EYES - ROTATE", "actions":[{"service":"ALLeds", "call":["rotateEyes",0x00FF0099,1,10]}]},
+				//{"type":"blocking", "title":"EYES - RASTA", "actions":[{"service":"ALLeds", "call":["rasta",10]}]},
+				//{"type":"blocking", "title":"EYES - RND", "actions":[{"service":"ALLeds", "call":["randomEyes",10]}]},
+
+				{"type":"blocking", "title":"Wakeup", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/WakeUp_1)"]}]},
 				{"type":"blocking", "title":"knight", "actions":[{"service":"ALAnimatedSpeech", "call":["say","$eyes=red ^run(animations/Stand/Waiting/Knight_1)"]}]},
-				{"type":"blocking", "title":"AL", "actions":[{"service":"ALAutonomousLife", "call":["stopAll"]}]},
+
 				{"type":"blocking", "title":"start led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
 				{"type":"blocking", "title":"stop led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["stopBehavior","animations/LED/CircleEyes"]}]},
 				{"type":"blocking", "title":"Wings_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Wings_1)"]}]},
@@ -283,7 +291,7 @@ pageData =
 				{"type":"blocking", "title":"Hey_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Hey_1)"]}]},
 				{"type":"blocking", "title":"ThinkingLoop_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/BodyTalk/Thinking/ThinkingLoop_1)"]}]},
 				{"type":"blocking", "title":"ThinkingLoop_2", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/BodyTalk/Thinking/ThinkingLoop_2)"]}]},
-				{"type":"blocking", "title":"Speaking Motion", "actions":[{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black \\pau=60000\\ "]}]}
+				{"type":"blocking", "title":"Speaking Motion", "actions":[{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=blink \\pau=60000\\ "]}]}
 			]
 		}
 	]
