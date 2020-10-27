@@ -12,7 +12,7 @@
     <link rel="icon" href="img/naoth-32.png" sizes="32x32">
     <link rel="icon" href="img/naoth-96.png" sizes="96x96">
 
-    <title>Robot Stage Control V1.4</title>
+    <title>Robot Stage Control V1.5</title>
     
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="lib/bootstrap-3.4.1/css/bootstrap.min.css" >
@@ -382,8 +382,8 @@
     */
     
     var motionConfig = {
-      "speed_slow"   : [ ['MaxVelXY', 0.2], ['MaxVelTheta', 0.4], ['MaxAccXY', 0.35], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', 0    ] ],
-      "speed_normal" : [ ['MaxVelXY', 0.3], ['MaxVelTheta', 0.6], ['MaxAccXY', 0.45], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', 0.1  ] ],
+      "speed_slow"   : [ ['MaxVelXY', 0.2], ['MaxVelTheta', 0.4], ['MaxAccXY', 0.35], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', -0.1  ] ],
+      "speed_normal" : [ ['MaxVelXY', 0.3], ['MaxVelTheta', 0.6], ['MaxAccXY', 0.45], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', 0.0  ] ],
       "speed_fast"   : [ ['MaxVelXY', 0.4], ['MaxVelTheta', 1.0], ['MaxAccXY', 0.55], ['MaxAccTheta', 3.0], ['MaxJerkXY', 5.0], ['MaxJerkTheta', 50.0], ['TorsoWy', 0.174] ]
     };
       
@@ -457,8 +457,9 @@
       }
       */
       
+      var resendDelay = 600;
       if( (moveState != lastMoveState) || // send on change
-          (moveState > 0 && getTime() > timeStampLastMoveCommand + 1000)) // resend
+          (moveState > 0 && getTime() > timeStampLastMoveCommand + resendDelay)) // resend
       {
         timeStampLastMoveCommand = getTime();
         sendMotionCommand();
