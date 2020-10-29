@@ -243,6 +243,28 @@ pageData =
 				]}
 			]
 		},
+		{"type":"headline", "title":"Eyes", "items":[
+			    {"type":"blocking", "title":"OFF", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","off"]}]},
+				//{"type":"blocking", "title":"PURPLE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes", 0x009900FF]}]},
+				{"type":"blocking", "title":"BLUE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","blue"]}]},
+				{"type":"blocking", "title":"GREEN", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","green"]}]},
+				{"type":"blocking", "title":"YELLOW", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","yellow"]}]},
+				{"type":"blocking", "title":"CYAN", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","cyan"]}]},
+				//{"type":"blocking", "title":"PINK", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes",0x00FF0099]}]},
+				{"type":"blocking", "title":"RAINBOW", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","rainbow"]}]},
+				{"type":"blocking", "title":"RANDOM", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","random"]}]},
+				{"type":"blocking", "title":"BLINK", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","blink"]}]},
+				{"type":"blocking", "title":"TWINKLE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","twinkle"]}]},
+				//{"type":"blocking", "title":"ROTATE", "actions":[{"service":"ALLeds", "call":["rotateEyes",0x00FF0099,1,10]}]},
+				//{"type":"blocking", "title":"RASTA", "actions":[{"service":"ALLeds", "call":["rasta",10]}]},
+				//{"type":"blocking", "title":"RND", "actions":[{"service":"ALLeds", "call":["randomEyes",10]}]},
+			    
+			    //{"type":"blocking", "title":"start led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
+				//{"type":"blocking", "title":"stop led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["stopBehavior","animations/LED/CircleEyes"]}]}
+			    
+			    {"type":"button", "title":"Tablet:BLACK", "actions":[{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black "]}]}
+		  ]
+		},
 		{"type":"headline", "title":"Animations", "items":[
 				//{"type":"blocking", "title":"ALGET", "actions":[{"service":"ALAutonomousLife", "call":["getState"], "sync":true}]},
 				//{"type":"blocking", "title":"ALGETTracking", "actions":[{"service":"ALBasicAwareness", "call":["getTrackingMode"], "sync":true}]},
@@ -252,26 +274,9 @@ pageData =
 				//{"service":"ALAutonomousLife", "call":["setState", "interactive"], "sync":true}], "color":"yellow"},
 				//{"type":"blocking", "title":"Set Tracking", "actions":[{"service":"ALBasicAwareness", "call":["setTrackingMode", "Head"]}], "color":"yellow"},
 
-				{"type":"blocking", "title":"EYES - OFF", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","off"]}]},
-				{"type":"blocking", "title":"EYES - PURPLE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes", 0x009900FF]}]},
-				{"type":"blocking", "title":"EYES - BLUE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","blue"]}]},
-				{"type":"blocking", "title":"EYES - GREEN", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","green"]}]},
-				{"type":"blocking", "title":"EYES - YELLOW", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","yellow"]}]},
-				{"type":"blocking", "title":"EYES - CYAN", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","cyan"]}]},
-				{"type":"blocking", "title":"EYES - PINK", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes",0x00FF0099]}]},
-				{"type":"blocking", "title":"EYES - RAINBOW", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","rainbow"]}]},
-				{"type":"blocking", "title":"EYES - RANDOM", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","random"]}]},
-				{"type":"blocking", "title":"EYES - BLINK", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","blink"]}]},
-				{"type":"blocking", "title":"EYES - TWINKLE", "actions":[{"service":"ALMemory", "call":["raiseEvent","eyes","twinkle"]}]},
-				//{"type":"blocking", "title":"EYES - ROTATE", "actions":[{"service":"ALLeds", "call":["rotateEyes",0x00FF0099,1,10]}]},
-				//{"type":"blocking", "title":"EYES - RASTA", "actions":[{"service":"ALLeds", "call":["rasta",10]}]},
-				//{"type":"blocking", "title":"EYES - RND", "actions":[{"service":"ALLeds", "call":["randomEyes",10]}]},
-
 				{"type":"blocking", "title":"Wakeup", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/WakeUp_1)"]}]},
-				{"type":"blocking", "title":"knight", "actions":[{"service":"ALAnimatedSpeech", "call":["say","$eyes=red ^run(animations/Stand/Waiting/Knight_1)"]}]},
+				{"type":"blocking", "title":"Knight", "actions":[{"service":"ALAnimatedSpeech", "call":["say","$eyes=red ^run(animations/Stand/Waiting/Knight_1)"]}]},
 
-				{"type":"blocking", "title":"start led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","animations/LED/CircleEyes"]}]},
-				{"type":"blocking", "title":"stop led circle eyes", "actions":[{"service":"ALBehaviorManager", "call":["stopBehavior","animations/LED/CircleEyes"]}]},
 				{"type":"blocking", "title":"Wings_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Wings_1)"]}]},
 				{"type":"blocking", "title":"Wings_3", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Gestures/Wings_3)"]}]},
 				{"type":"blocking", "title":"MysticalPower_1", "actions":[{"service":"ALAnimatedSpeech", "call":["say","^run(animations/Stand/Waiting/MysticalPower_1)"]}]},
