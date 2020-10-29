@@ -112,9 +112,23 @@
         // collect buttons to be blocked
         //buttons.push(anchor);
         
-        var li = $('<li style="padding-right:1em;"></li>').append(anchor);
+        var li = $('<li style="padding-right:0.5em;"></li>').append(anchor).append(" ");
         
         navbar.append(li);
+      }
+    }
+    
+    function loadEyes(data) {
+      var container = $("#eyes");
+
+      for(var e of data['items']) { // style="color:black;"
+        var anchor = $('<a class="btn ' + getClassForColor(e['color']) + '" href="#">' + e['title'] + '</a>')
+          .click( nonBlockingActionsExecutor(e['actions']) );
+        
+        // collect buttons to be blocked
+        //buttons.push(anchor);
+
+        container.append(anchor).append(" ");
       }
     }
     
@@ -125,6 +139,9 @@
       // HACK: treat animations differently
       if(data['title'] == 'Animations') {
         loadAnimations(data);
+        return;
+      } else if(data['title'] == 'Eyes') {
+        loadEyes(data);
         return;
       }
     
@@ -189,6 +206,7 @@
         buttonGroups[group_name].push(anchor);
       }
     }
+    
     
     /*
     function loadAnimations() {
@@ -331,7 +349,7 @@
       39: "right",
       40: "down",
       65: "l", // a
-      68: "r"  // r
+      68: "r" // d
     };
     
     // initialize the states
@@ -390,17 +408,35 @@
 
     function doKeyDown(e)
     {
+      if (e.keyCode == 87) { // w - fast
+        $("input[name='move_speed']").filter('[value=speed_fast]').prop('checked', true);
+        console.log("fast");
+        e.preventDefault();
+      } else if (e.keyCode == 83) { // s - slow
+        $("input[name='move_speed']").filter('[value=speed_slow]').prop('checked', true);
+        console.log("slow");
+        e.preventDefault();
+      }
+    
       if(e.keyCode in key_names) { 
         var name = key_names[e.keyCode]; 
         key_state[name] = 1;  
         //last_keydown_time = +new Date(); 
         
         e.preventDefault();
-      }       
+      }
 		}
     
     function doKeyUp(e)
     {
+      if (e.keyCode == 87) { // w - fast
+        $("input[name='move_speed']").filter('[value=speed_normal]').prop('checked', true);
+        e.preventDefault();
+      } else if (e.keyCode == 83) { // s - slow
+        $("input[name='move_speed']").filter('[value=speed_normal]').prop('checked', true);
+        e.preventDefault();
+      }
+    
       if( e.keyCode in key_names) { 
         var name = key_names[e.keyCode]; 
         key_state[name] = 0;
@@ -583,6 +619,15 @@
         <!-- right side -->
         <div class="col-md-8">
           <div class="row" style="overflow-y: auto;">
+          
+            <div class="col-md-12">
+              <div id="panel-eyes" class="panel panel-info">
+                <div class="panel-heading">Lights (Eyes, Tablet)</div>
+                <div class="panel-body" style="" id="eyes">
+                  <!--<ul class="list-group" id="animations"><ul>-->
+                </div>
+              </div>
+            </div>
           
             <!-- animations -->
             <div class="col-md-12">
