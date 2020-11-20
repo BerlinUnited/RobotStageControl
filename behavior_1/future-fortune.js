@@ -24,34 +24,34 @@ pageData =
 					{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOn"]},
 					{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","All", 0]},
 					{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/stopBasicAwareness"]},
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white"]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off"]}
 				]},
 				{"type":"button", "title":"2.2 R.U.R.", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white \\vct=60\\ \\rspd=90\\ Send me to the stamping mill!"]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off \\vct=60\\ \\rspd=90\\ Send me to the stamping mill!"]}
 				]},
 				{"type":"button", "title":"2.3.1 R.U.R. Path 2", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white ^run(rur_behaviors/path_2)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off ^run(rur_behaviors/path_2)"]}
 				]},
 				{"type":"button", "title":"2.3.2 R.U.R.", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white \\vct=60\\ \\rspd=90\\ \\wait=6\\ I won't work for you.	Put me into the stamping mill!"]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off \\vct=60\\ \\rspd=90\\ \\wait=6\\ I won't work for you.	Put me into the stamping mill!"]}
 				]},
 				{"type":"button", "title":"2.5 R.U.R. Path 3", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white \\vct=60\\ \\rspd=90\\ \\wait=6\\ ^start(rur_behaviors/path_3) You are not as strong as the Robots.	You are not as skillful as the Robots. The Robots can do everything. You only give orders. You do nothing but talk. ^wait(rur_behaviors/path_3)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off \\vct=60\\ \\rspd=90\\ \\wait=6\\ ^start(rur_behaviors/path_3) You are not as strong as the Robots.	You are not as skillful as the Robots. The Robots can do everything. You only give orders. You do nothing but talk. ^wait(rur_behaviors/path_3)"]}
 				]},
 				{"type":"button", "title":"2.6 R.U.R.", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white \\vct=60\\ \\rspd=85\\ \\wait=6\\ I don't want any master. I know everything for myself."]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off \\vct=60\\ \\rspd=85\\ \\wait=6\\ I don't want any master. I know everything for myself."]}
 				]},
 				{"type":"button", "title":"2.7 R.U.R.", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white \\vct=60\\ \\rspd=85\\ \\wait=6\\ I don't want a master. I want to \\emph=2\\ be master. \\pau=250\\ I want to be master over others."]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off \\vct=60\\ \\rspd=85\\ \\wait=6\\ I don't want a master. I want to \\emph=2\\ be master. \\pau=250\\ I want to be master over others."]}
 				]},
 				{"type":"button", "title":"2.8 R.U.R.", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white \\vct=50\\ \\rspd=85\\	\\readmode=word\\ i want to be master over people."]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off \\vct=50\\ \\rspd=85\\	\\readmode=word\\ i want to be master over people."]}
 				]},
 				{"type":"button", "title":"2.9 R.U.R.", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white \\vct=60\\ \\rspd=85\\ Then send me to the stamping mill."]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off \\vct=60\\ \\rspd=85\\ Then send me to the stamping mill."]}
 				]},
 				{"type":"button", "title":"2.10 R.U.R. Path 4", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=white ^start(rur_behaviors/path_4)\\rspd=100\\ \\vct=80\\ \\wait=6\\ What are you going to do? What are you going to do?^wait(rur_behaviors/path_4)"]}
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off ^start(rur_behaviors/path_4)\\rspd=100\\ \\vct=80\\ \\wait=6\\ What are you going to do? What are you going to do?^wait(rur_behaviors/path_4)"]}
 				]}
 			]
 		},
@@ -175,7 +175,7 @@ pageData =
 		},
 		{"type":"headline", "title":"7 Video Call", "items":[
 				{"type":"button", "title":"7.1 Video Call Collapse", "actions":[
-					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off ^run(theater_playvideo/collapse)"]},
+					{"service":"ALAnimatedSpeech", "call":["say","$theater_show_image=black $eyes=off ^run(theater_playvideo/collapse) $theater_show_image=black"]},
 					{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/stopBasicAwareness"]},
 					{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","All", 1]}
 				]},
