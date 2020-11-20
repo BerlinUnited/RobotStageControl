@@ -3,19 +3,26 @@ pageData =
 {
 	"note":"header kann auch gerne hardcoded sein; type ist in jedem Array der gleiche, der kann im Zweifel auch weggelassen werden",
 	"header":[
-		//{"type":"non-blocking", "title":"Head left cool", "actions":[{"service":"ALTracker", "call":["lookAt",[0.1, 1.0, 1.6], 2, 1.0, false], "sync":true}],"color":"white"},
-		{"type":"non-blocking", "title":"Head left", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadLeft"]}],"color":"white"},
-		{"type":"non-blocking", "title":"Head center", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHead"]}],"color":"white"},
-		{"type":"non-blocking", "title":"Head right", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/fixHeadRight"]}],"color":"white"},
-		{"type":"non-blocking", "title":"BasicAwareness On", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/reanableBasicAwareness"]}],"color":"yellow"},
-		{"type":"non-blocking", "title":"BasicAwareness Off", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/stopBasicAwareness"]}],"color":"yellow"},
-		//{"type":"non-blocking", "title":"BasicAwareness Off", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/disableAutonomousMovement"]}],"color":"yellow"},
-		//{"type":"non-blocking", "title":"BasicAwareness On", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/enableAutonomousMovement"]}],"color":"yellow"},
-		{"type":"non-blocking", "title":"Sound On", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOn"]}],"color":"cyan"},
-		{"type":"non-blocking", "title":"Sound Off", "actions":[{"service":"ALBehaviorManager", "call":["startBehavior","theaterhelpers/soundOff"]}],"color":"cyan"},
-		{"type":"non-blocking", "title":"Safety On", "actions":[{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","All", 1]}],"color":"blue"},
+		{"type":"non-blocking", "title":"Head left"  , "actions":[{"service":"ALTracker", "call":["lookAt",[0.1,  1.0, 1.6], 2, 1.0, false], "sync":true}],"color":"white"},
+    {"type":"non-blocking", "title":"Head center", "actions":[{"service":"ALTracker", "call":["lookAt",[0.1,  0.0, 1.6], 2, 1.0, false], "sync":true}],"color":"white"},
+    {"type":"non-blocking", "title":"Head right" , "actions":[{"service":"ALTracker", "call":["lookAt",[0.1, -1.0, 1.6], 2, 1.0, false], "sync":true}],"color":"white"},
+    
+    //{"type":"blocking", "title":"ALGET", "actions":[{"service":"ALAutonomousLife", "call":["getState"], "sync":true}]},
+		//{"type":"blocking", "title":"ALGETTracking", "actions":[{"service":"ALBasicAwareness", "call":["getTrackingMode"], "sync":true}]},
+    {"type":"blocking", "title":"AutonomousLife OFF", "actions":[{"service":"ALAutonomousLife", "call":["setState", "disabled"]}], "color":"yellow"},
+    {"type":"blocking", "title":"AutonomousLife SOLITARY", "actions":[{"service":"ALAutonomousLife", "call":["setState", "solitary"]}], "color":"yellow"},
+    {"type":"blocking", "title":"AutonomousLife ACTIVE", "actions":[{"service":"ALAutonomousLife", "call":["setState", "interactive"]}], "color":"yellow"},
+      
+    //{"type":"blocking", "title":"Autonomous Life Aktiv", "actions":[{"service":"ALAutonomousLife", "call":["setState", "interactive"], "sync":true}], "color":"yellow"},
+    //{"type":"blocking", "title":"Set Tracking", "actions":[{"service":"ALBasicAwareness", "call":["setTrackingMode", "Head"]}], "color":"yellow"},
+
+		{"type":"non-blocking", "title":"Sound On", "actions":[{"service":"ALAudioDevice", "call":["setOutputVolume", 50]}],"color":"cyan"},
+		{"type":"non-blocking", "title":"Sound Off", "actions":[{"service":"ALAudioDevice", "call":["setOutputVolume", 0]}],"color":"cyan"},
+		
+    {"type":"non-blocking", "title":"Safety On", "actions":[{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","All", 1]}],"color":"blue"},
 		{"type":"non-blocking", "title":"Safety Off", "actions":[{"service":"ALMotion", "call":["setExternalCollisionProtectionEnabled","All", 0]}],"color":"blue"},
-		{"type":"non-blocking", "title":"Rest", "actions":[{"service":"ALMotion", "call":["rest"]}],"color":"red"},
+		
+    {"type":"non-blocking", "title":"Rest", "actions":[{"service":"ALMotion", "call":["rest"]}],"color":"red"},
 		{"type":"non-blocking", "title":"Wake Up", "actions":[{"service":"ALMotion", "call":["wakeUp"]}],"color":"red"}
 	],
 	"scenes":[
