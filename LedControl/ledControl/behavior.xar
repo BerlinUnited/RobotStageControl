@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8" ?><ChoregrapheProject xmlns="http://www.aldebaran-robotics.com/schema/choregraphe/project.xsd" xar_version="3"><Box name="root" id="-1" localization="8" tooltip="Root box of Choregraphe&apos;s behavior. Highest level possible." x="0" y="0"><bitmap>media/images/box/root.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Input name="eyes" type="0" type_size="1" nature="4" stm_value_name="eyes" inner="1" tooltip="eyes desc" id="4" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="5" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Wait For Signals" id="4" localization="8" tooltip="Wait for both inputs to be stimulated before stimulating its output." x="254" y="26"><bitmap>media/images/box/wait.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.ok = [False]*2
+
+    def onUnload(self):
+        #puts code for box cleanup here
+        ""
+
+    def onStart(self, nInput):
+        self.ok[nInput-1] = True
+        bOutput = True
+        for bOk in self.ok:
+            bOutput = bOutput and bOk
+        if( bOutput ):
+            self.ok = [False]*2
+            self.signalsReceived(self.msg)
+
+    def onInput_message(self, p):
+        self.msg = p
+        self.onStart(1)
+
+    def onInput_signal2(self):
+        self.onStart(2)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when Diagram is loaded." id="1" /><Input name="message" type="0" type_size="1" nature="1" inner="0" tooltip="First signal to wait." id="2" /><Input name="signal2" type="1" type_size="1" nature="1" inner="0" tooltip="Second signal to wait." id="3" /><Output name="signalsReceived" type="0" type_size="1" nature="2" inner="0" tooltip="Signal sent when both inputs have been stimulated." id="4" /></Box><Box name="LED Control" id="8" localization="8" tooltip="This box is empty and should be used to create any box diagram you would like.&#x0A;&#x0A;To edit its diagram, double-click on it." x="258" y="199"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="0" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Switch Eyes" id="9" localization="8" tooltip="" x="147" y="270"><bitmap>media/images/box/box-python-script.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.autonomouslife = self.session().service("ALAutonomousLife")
+
+    def onUnload(self):
+        pass
+
+    def onInput_onStart(self, p):
+
+        self.autonomouslife.setAutonomousAbilityEnabled("AutonomousBlinking", p == "auto")
+
+        if p == "off":
+            self.off()
+        elif p == "blink":
+            self.blink()
+        elif p == "random":
+            self.random()
+        elif p == "twinkle":
+            self.twinkle()
+        elif p == "rainbow":
+            self.rainbow()
+        else:
+            self.color(p)]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="3" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Output name="off" type="1" type_size="1" nature="2" inner="0" tooltip="" id="3" /><Output name="blink" type="1" type_size="1" nature="2" inner="0" tooltip="" id="4" /><Output name="color" type="3" type_size="1" nature="2" inner="0" tooltip="" id="5" /><Output name="rainbow" type="1" type_size="1" nature="2" inner="0" tooltip="" id="6" /><Output name="twinkle" type="1" type_size="1" nature="2" inner="0" tooltip="" id="7" /><Output name="random" type="1" type_size="1" nature="2" inner="0" tooltip="" id="8" /></Box><Box name="Eyes LEDs" id="15" localization="8" tooltip="Set the color of LEDs of robot&apos;s eyes." x="368" y="282"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.fadeOps = []
+        self.leds = self.session().service("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_color(self, p):
+        if( self.getParameter("Side") == "Left" ):
+            sGroup = "LeftFaceLeds"
+        elif( self.getParameter("Side") == "Right" ):
+            sGroup = "RightFaceLeds"
+        else:
+            sGroup = "FaceLeds"
+        fadeOp = self.leds.fadeRGB(sGroup, p, self.getParameter("Duration (s)"), _async=True)
+        self.fadeOps.append(fadeOp)
+        fadeOp.wait()
+        self.fadeOps.remove(fadeOp)
+        if( self.fadeOps == [] ):
+            self.onDone() # activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="color" type="3" type_size="1" nature="2" inner="0" tooltip="Color of robot&apos;s eyes." id="2" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" /><Parameter name="Side" inherits_from_parent="1" content_type="3" value="Both" default_value="Both" custom_choice="0" tooltip="Choose the eye where the LED light is set." id="4"><Choice value="Both" /><Choice value="Left" /><Choice value="Right" /></Parameter><Parameter name="Duration (s)" inherits_from_parent="1" content_type="2" value="0.1" default_value="0.1" min="0" max="5" tooltip="Transition&apos;s duration in seconds." id="5" /></Box><Box name="Random Eyes" id="2" localization="8" tooltip="The color of the eyes changes randomly.&#x0A;&#x0A;Note: It is a never ending box. You have to call the onStop input to stop it." x="323" y="529"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[import random
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.bIsRunning = False
+        self.leds = self.session().service("ALLeds")
+        self.colors = ["green", "blue", "white", "yellow", "cyan"]
+
+    def onUnload(self):
+        #puts code for box cleanup here
+        self.bMustStop = True
+        if not self.bIsRunning:
+            self.onStopped()
+
+    def onInput_onStart(self):
+        #self.onStopped() # activate output of the box
+        if( self.bIsRunning ):
+            return
+        self.bIsRunning = True
+        self.bMustStop = False
+        while( not self.bMustStop ):
+            rRandTime = random.uniform(0.0,2.0)
+            self.leds.fadeRGB("FaceLeds", random.choice(self.colors), rRandTime)
+            time.sleep(random.uniform(0.0,3.0))
+        self.bIsRunning = False
+        self.onStopped()
+
+    def onInput_onStop(self):
+        self.onUnload()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is stopped." id="4" /></Box><Box name="blink" id="6" localization="8" tooltip="Enter description here" x="498" y="217"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="start" type="1" type_size="1" nature="2" inner="0" tooltip="This input has been automatically generated&#x0A;by converting several boxes into a single box." id="2" /><Input name="stop" type="1" type_size="1" nature="3" inner="0" tooltip="This input has been automatically generated&#x0A;by converting several boxes into a single box." id="3" /><Output name="output" type="1" type_size="1" nature="1" inner="0" tooltip="" id="4" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Blink" id="5" localization="8" tooltip="This box makes the robot blink once." x="580" y="50"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[import time
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.leds = self.session().service("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onStart(self):
+        rDuration = 0.05
+        self.leds.fadeRGB( "FaceLed0", 0x000000, rDuration, _async=True )
+        self.leds.fadeRGB( "FaceLed1", 0x000000, rDuration, _async=True )
+        self.leds.fadeRGB( "FaceLed2", 0xffffff, rDuration, _async=True )
+        self.leds.fadeRGB( "FaceLed3", 0x000000, rDuration, _async=True )
+        self.leds.fadeRGB( "FaceLed4", 0x000000, rDuration, _async=True )
+        self.leds.fadeRGB( "FaceLed5", 0x000000, rDuration, _async=True )
+        self.leds.fadeRGB( "FaceLed6", 0xffffff, rDuration, _async=True )
+        self.leds.fadeRGB( "FaceLed7", 0x000000, rDuration, _async=True )
+        time.sleep( 0.1 )
+        self.leds.fadeRGB( "FaceLeds", 0xffffff, rDuration )
+        self.onDone()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" /></Box><Box name="Random Timer" id="14" localization="8" tooltip="Wait a moment before triggering the output. &#x0A;Can be stopped anytime. &#x0A;Multiple inputs will trigger multiple outputs." x="373" y="69"><bitmap>media/images/box/wait.png</bitmap><script language="4"><content><![CDATA[import qi
+import functools
+import random
+
+class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.delayed = None
+        self.isRunning = True
+
+    def onUnload(self):
+        self.isRunning = False
+        if self.delayed is not None:
+            self.delayed.cancel()
+
+    def onInput_onStart(self):
+        self.isRunning = True
+        while self.isRunning:
+            # wait between 1 and 7 seconds like in Autonomous blinking
+            wait_time = random.randint( 1, 7 )
+            self.delayed = qi.async(self.timerOutput, delay=wait_time * 1000 * 1000)
+            self.delayed.wait()
+
+        self.onStopped()
+
+    def onInput_onStop(self):
+        self.onUnload()
+        self.onStopped()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Start the Delay box with the configured timeout value." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the wait and stimulate the output." id="3" /><Output name="timerOutput" type="1" type_size="1" nature="1" inner="0" tooltip="Send a bang once delay set in parameters is elapsed, or if the box is stopped and the appropriate parameter is set." id="4" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="" id="5" /></Box><Box name="Eye LEDs" id="3" localization="8" tooltip="Set the LED color of the eyes. Note that you must open the box to enter the color." x="203" y="69"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" /><Parameter name="Side" inherits_from_parent="0" content_type="3" value="Both" default_value="Both" custom_choice="0" tooltip="Choose the eye where the LED light is set." id="4"><Choice value="Both" /><Choice value="Left" /><Choice value="Right" /></Parameter><Parameter name="Duration (s)" inherits_from_parent="0" content_type="2" value="1" default_value="0.1" min="0" max="5" tooltip="Transition&apos;s duration in seconds." id="5" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Eyes LEDs" id="15" localization="8" tooltip="Set the color of LEDs of robot&apos;s eyes." x="281" y="41"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.fadeOps = []
+        self.leds = self.session().service("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_color(self, p):
+        if( self.getParameter("Side") == "Left" ):
+            sGroup = "LeftFaceLeds"
+        elif( self.getParameter("Side") == "Right" ):
+            sGroup = "RightFaceLeds"
+        else:
+            sGroup = "FaceLeds"
+        fadeOp = self.leds.fadeRGB(sGroup, 256*256*p[0] + 256*p[1] + p[2], self.getParameter("Duration (s)"), _async=True)
+        self.fadeOps.append(fadeOp)
+        fadeOp.wait()
+        self.fadeOps.remove(fadeOp)
+        if( self.fadeOps == [] ):
+            self.onDone() # activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="color" type="2" type_size="3" nature="2" inner="0" tooltip="Color of robot&apos;s eyes." id="2" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" /><Parameter name="Side" inherits_from_parent="1" content_type="3" value="Both" default_value="Both" custom_choice="0" tooltip="Choose the eye where the LED light is set." id="4"><Choice value="Both" /><Choice value="Left" /><Choice value="Right" /></Parameter><Parameter name="Duration (s)" inherits_from_parent="1" content_type="2" value="0.1" default_value="0.1" min="0" max="5" tooltip="Transition&apos;s duration in seconds." id="5" /></Box><Box name="Color Edit" id="16" localization="8" tooltip="Transmit a table of number [R,G,B] correponsding to the selected color." plugin="coloredit_plugin" x="105" y="47"><bitmap>media/images/box/interaction/vocabulary.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+	def __init__(self):
+		GeneratedClass.__init__(self)
+
+	def onInput_onStart(self):
+		self.onStopped([255, 255, 255])]]></content></script><pluginContent><color>#ffffff</color></pluginContent><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="To send the color on the output." id="2" /><Output name="onStopped" type="2" type_size="3" nature="1" inner="0" tooltip="[R,G,B] with R, G and B between 0 and 255." id="3" /></Box><Link inputowner="15" indexofinput="2" outputowner="16" indexofoutput="3" /><Link inputowner="16" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="0" indexofinput="3" outputowner="15" indexofoutput="3" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Link inputowner="5" indexofinput="2" outputowner="14" indexofoutput="4" /><Link inputowner="14" indexofinput="2" outputowner="3" indexofoutput="3" /><Link inputowner="3" indexofinput="2" outputowner="0" indexofoutput="2" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Box name="Set LEDs" id="1" localization="8" tooltip="Set the intensity of the LEDs of a given group." x="364" y="144"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.leds = self.session().service("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onSet(self):
+        self.leds.fade(self.getParameter("LEDs group"), self.getParameter("Intensity (%)")/100., self.getParameter("Duration (s)"))
+        self.onReady() # activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onSet" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is stimulated, the intensity of all the LEDs from the group is&#x0A;set to the intensity parameter value." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="" id="3" /><Output name="onReady" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when LEDs intensity has been set." id="4" /><Parameter name="LEDs group" inherits_from_parent="0" content_type="3" value="AllLeds" default_value="EarLeds" custom_choice="1" tooltip="The group of LEDs which intensity is to set.&#x0A;&#x0A;Note: You can call the listGroups() method of ALMotion to get the name of LEDs&#x0A;groups which are not listed here." id="5"><Choice value="AllLeds" /><Choice value="BrainLeds" /><Choice value="EarLeds" /><Choice value="FaceLeds" /><Choice value="FeetLeds" /><Choice value="LeftEarLeds" /><Choice value="LeftFaceLeds" /><Choice value="LeftFootLeds" /><Choice value="RightEarLeds" /><Choice value="RightFaceLeds" /><Choice value="RightFootLeds" /></Parameter><Parameter name="Intensity (%)" inherits_from_parent="0" content_type="1" value="0" default_value="100" min="0" max="100" tooltip="Intensity all the LEDs from the group is set to." id="6" /><Parameter name="Duration (s)" inherits_from_parent="0" content_type="2" value="1" default_value="1" min="0" max="60" tooltip="How much time to go to the max/min intensity in seconds." id="7" /><Resource name="Left eye leds" type="Lock" timeout="0" /><Resource name="Right eye leds" type="Lock" timeout="0" /></Box><Box name="Twinkle" id="3" localization="8" tooltip="The selected LEDs flash on and off during the time defined in parameters." x="345" y="408"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="4" /><Parameter name="LEDs group" inherits_from_parent="0" content_type="3" value="FaceLeds" default_value="FaceLeds" custom_choice="1" tooltip="The group of LEDs which intensity is to set.&#x0A;&#x0A;Note: You can call the listGroups() method of ALMotion to get the name of LEDs&#x0A;groups which are not listed here." id="5"><Choice value="AllLeds" /><Choice value="BrainLeds" /><Choice value="EarLeds" /><Choice value="FaceLeds" /><Choice value="FeetLeds" /><Choice value="LeftEarLeds" /><Choice value="LeftFaceLeds" /><Choice value="LeftFootLeds" /><Choice value="RightEarLeds" /><Choice value="RightFaceLeds" /><Choice value="RightFootLeds" /></Parameter><Parameter name="Time to flash on (s)" inherits_from_parent="0" content_type="2" value="0.5" default_value="0.5" min="0.1" max="2" tooltip="How much time to go to the intensity in seconds." id="6" /><Parameter name="Time to flash off (s)" inherits_from_parent="0" content_type="2" value="0.5" default_value="0.5" min="0.1" max="2" tooltip="How much time to go to the intensity in seconds." id="7" /><Parameter name="Animation duration (s)" inherits_from_parent="0" content_type="2" value="10" default_value="10" min="0.1" max="5000" tooltip="Duration of the animation of LEDs." id="8" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Set LEDs" id="3" localization="8" tooltip="Set the intensity of the LEDs of a given group." x="298" y="33"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.leds = ALProxy("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onSet(self):
+        self.leds.fade(self.getParameter("LEDs group"), self.getParameter("Intensity (%)")/100., self.getParameter("Time to flash on (s)"))
+        self.onReady() # activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onSet" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is stimulated, the intensity of all the LEDs from the group is&#x0A;set to the intensity parameter value." id="2" /><Output name="onReady" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when LEDs intensity has been set." id="3" /><Parameter name="LEDs group" inherits_from_parent="1" content_type="3" value="FaceLeds" default_value="FaceLeds" custom_choice="1" tooltip="The group of LEDs which intensity is to set.&#x0A;&#x0A;Note: You can call the listGroups() method of ALMotion to get the name of LEDs&#x0A;groups which are not listed here." id="4"><Choice value="AllLeds" /><Choice value="BrainLeds" /><Choice value="EarLeds" /><Choice value="FaceLeds" /><Choice value="FeetLeds" /><Choice value="LeftEarLeds" /><Choice value="LeftFaceLeds" /><Choice value="LeftFootLeds" /><Choice value="RightEarLeds" /><Choice value="RightFaceLeds" /><Choice value="RightFootLeds" /></Parameter><Parameter name="Intensity (%)" inherits_from_parent="0" content_type="1" value="100" default_value="100" min="0" max="100" tooltip="Intensity all the LEDs from the group is set to." id="5" /><Parameter name="Time to flash on (s)" inherits_from_parent="1" content_type="2" value="0.5" default_value="0.5" min="0.1" max="2" tooltip="How much time to go to the intensity in seconds." id="6" /></Box><Box name="Set LEDs" id="1" localization="8" tooltip="Set the intensity of the LEDs of a given group." x="302" y="176"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.leds = ALProxy("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onSet(self):
+        self.leds.fade(self.getParameter("LEDs group"), self.getParameter("Intensity (%)")/100., self.getParameter("Time to flash off (s)"))
+        self.onReady() # activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onSet" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is stimulated, the intensity of all the LEDs from the group is&#x0A;set to the intensity parameter value." id="2" /><Output name="onReady" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when LEDs intensity has been set." id="3" /><Parameter name="LEDs group" inherits_from_parent="1" content_type="3" value="FaceLeds" default_value="FaceLeds" custom_choice="1" tooltip="The group of LEDs which intensity is to set.&#x0A;&#x0A;Note: You can call the listGroups() method of ALMotion to get the name of LEDs&#x0A;groups which are not listed here." id="4"><Choice value="AllLeds" /><Choice value="BrainLeds" /><Choice value="EarLeds" /><Choice value="FaceLeds" /><Choice value="FeetLeds" /><Choice value="LeftEarLeds" /><Choice value="LeftFaceLeds" /><Choice value="LeftFootLeds" /><Choice value="RightEarLeds" /><Choice value="RightFaceLeds" /><Choice value="RightFootLeds" /></Parameter><Parameter name="Intensity (%)" inherits_from_parent="0" content_type="1" value="0" default_value="100" min="0" max="100" tooltip="Intensity all the LEDs from the group is set to." id="5" /><Parameter name="Time to flash off (s)" inherits_from_parent="1" content_type="2" value="0.5" default_value="0.5" min="0.1" max="2" tooltip="How much time to go to the intensity in seconds." id="6" /></Box><Link inputowner="3" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="1" indexofinput="2" outputowner="3" indexofoutput="3" /><Link inputowner="3" indexofinput="2" outputowner="1" indexofoutput="3" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Box name="Eye LEDs" id="4" localization="8" tooltip="Set the LED color of the eyes. Note that you must open the box to enter the color." x="522" y="381"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" /><Parameter name="Side" inherits_from_parent="0" content_type="3" value="Both" default_value="Both" custom_choice="0" tooltip="Choose the eye where the LED light is set." id="4"><Choice value="Both" /><Choice value="Left" /><Choice value="Right" /></Parameter><Parameter name="Duration (s)" inherits_from_parent="0" content_type="2" value="0.1" default_value="0.1" min="0" max="5" tooltip="Transition&apos;s duration in seconds." id="5" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Eyes LEDs" id="15" localization="8" tooltip="Set the color of LEDs of robot&apos;s eyes." x="371" y="65"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.ids = []
+        self.leds = ALProxy("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_color(self, p):
+        if( self.getParameter("Side") == "Left" ):
+            sGroup = "LeftFaceLeds"
+        elif( self.getParameter("Side") == "Right" ):
+            sGroup = "RightFaceLeds"
+        else:
+            sGroup = "FaceLeds"
+        id = self.leds.post.fadeRGB(sGroup, 256*256*p[0] + 256*p[1] + p[2], self.getParameter("Duration (s)"))
+        self.ids.append(id)
+        self.leds.wait(id, 0)
+        self.ids.remove(id)
+        if( self.ids == [] ):
+            self.onDone() # activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="color" type="2" type_size="3" nature="2" inner="0" tooltip="Color of robot&apos;s eyes." id="2" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" /><Parameter name="Side" inherits_from_parent="1" content_type="3" value="Both" default_value="Both" custom_choice="0" tooltip="Choose the eye where the LED light is set." id="4"><Choice value="Both" /><Choice value="Left" /><Choice value="Right" /></Parameter><Parameter name="Duration (s)" inherits_from_parent="1" content_type="2" value="0.1" default_value="0.1" min="0" max="5" tooltip="Transition&apos;s duration in seconds." id="5" /></Box><Box name="Color Edit" id="16" localization="8" tooltip="Transmit a table of number [R,G,B] correponsding to the selected color." plugin="coloredit_plugin" x="138" y="77"><bitmap>media/images/box/interaction/vocabulary.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+	def __init__(self):
+		GeneratedClass.__init__(self)
+
+	def onInput_onStart(self):
+		self.onStopped([0, 0, 0])]]></content></script><pluginContent><color>#000000</color></pluginContent><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="To send the color on the output." id="2" /><Output name="onStopped" type="2" type_size="3" nature="1" inner="0" tooltip="[R,G,B] with R, G and B between 0 and 255." id="3" /></Box><Link inputowner="15" indexofinput="2" outputowner="16" indexofoutput="3" /><Link inputowner="16" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="0" indexofinput="3" outputowner="15" indexofoutput="3" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Box name="rainbow" id="5" localization="8" tooltip="Set the color of one eye LED. Note that you must open the box to enter the color." x="705" y="369"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        #~ puts code for box initialization here
+        pass
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onStart(self):
+        #~ self.onStopped() #~ activate output of the box
+        pass]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Box behavior starts when a signal is received on this input." id="2" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="3" /><Parameter name="Side" inherits_from_parent="0" content_type="3" value="Left" default_value="Left" custom_choice="0" tooltip="Choose the eye where the LED light is set." id="4"><Choice value="Left" /><Choice value="Right" /></Parameter><Parameter name="Angle (degrees)" inherits_from_parent="0" content_type="3" value="0" default_value="0" custom_choice="0" tooltip="Angle (in degrees) where the LED is on the robot&apos;s eye. They are placed as&#x0A;following:&#x0A;&#x0A;         Right Eye   -&gt; (Front) &lt;-    Left Eye&#x0A;                     &#x0A;       90° .   . 45°                     45° .   . 90°&#x0A;  135° .         . 0°                   0° .         . 135°&#x0A;  180° .         . 315°            315° .         . 180°&#x0A;     225° .   . 270°                  270° .   . 225°" id="5"><Choice value="0" /><Choice value="45" /><Choice value="90" /><Choice value="135" /><Choice value="180" /><Choice value="225" /><Choice value="270" /><Choice value="315" /></Parameter><Parameter name="Duration (s)" inherits_from_parent="0" content_type="2" value="0.01" default_value="0.1" min="0" max="5" tooltip="Transition&apos;s duration in seconds." id="6" /><Timeline enable="0"><BehaviorLayer name="behavior_layer1"><BehaviorKeyframe name="keyframe1" index="1"><Diagram><Box name="Color Edit" id="16" localization="8" tooltip="Transmit a table of number [R,G,B] correponsding to the selected color." plugin="coloredit_plugin" x="199" y="59"><bitmap>media/images/box/interaction/vocabulary.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+	def __init__(self):
+		GeneratedClass.__init__(self)
+
+	def onInput_onStart(self):
+		self.onStopped([0, 0, 128])]]></content></script><pluginContent><color>#000080</color></pluginContent><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="To send the color on the output." id="2" /><Output name="onStopped" type="2" type_size="3" nature="1" inner="0" tooltip="[R,G,B] with R, G and B between 0 and 255." id="3" /></Box><Box name="Eye LED" id="2" localization="8" tooltip="Set the intensity of one LED of robot&apos;s eyes." x="407" y="44"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.ids = []
+        self.leds = ALProxy("ALLeds")
+        self.n = 0
+        self.names = ["FaceLed0",
+                      "FaceLed1",
+                      "FaceLed2",
+                      "FaceLed3",
+                      "FaceLed4",
+                      "FaceLed5",
+                      "FaceLed6",
+                      "FaceLed7"]
+
+    def onUnload(self):
+        #puts code for box cleanup here
+        #~ for id in self.ids:
+            #~ self.leds.stop(id)
+        self.bMustStop = True
+
+    def onInput_color(self, p):
+
+        self.setColors(p)
+        self.n += 1
+
+
+        self.onDone() # activate output of the box
+
+    def setColors(self, p):
+        c = [256*256*p[0] + 256*p[1] + p[2],
+             256*256*p[2] + 256*p[1] + p[0],
+             256*256*p[1] + 256*p[2] + p[0]]
+
+        d = self.getParameter("Duration (s)")
+
+        k = 0
+        for i in range(0,8):
+            j = (self.n+i) % 8
+            k += 1
+            self.leds.post.fadeRGB(self.names[j],c[k % 3],d)
+
+    def processAngle(self):
+        n = int( self.getParameter("Angle (degrees)") )
+        return [(45 - n) % 360 / 45] * 2
+
+    def onInput_onStop(self):
+        self.onUnload()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="color" type="2" type_size="3" nature="2" inner="0" tooltip="LED color." id="2" /><Input name="led_number" type="2" type_size="1" nature="1" inner="0" tooltip="" id="3" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="" id="4" /><Output name="onDone" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished." id="5" /><Parameter name="Side" inherits_from_parent="1" content_type="3" value="Left" default_value="Left" custom_choice="0" tooltip="Choose the eye where the LED light is set." id="6"><Choice value="Left" /><Choice value="Right" /></Parameter><Parameter name="Angle (degrees)" inherits_from_parent="1" content_type="3" value="0" default_value="0" custom_choice="0" tooltip="Angle (in degrees) where the LED is on the robot&apos;s eye. They are placed as&#x0A;following:&#x0A;&#x0A;         Right Eye   -&gt; (Front) &lt;-    Left Eye&#x0A;                     &#x0A;       90° .   . 45°                     45° .   . 90°&#x0A;  135° .         . 0°                   0° .         . 135°&#x0A;  180° .         . 315°            315° .         . 180°&#x0A;     225° .   . 270°                  270° .   . 225°" id="7"><Choice value="0" /><Choice value="45" /><Choice value="90" /><Choice value="135" /><Choice value="180" /><Choice value="225" /><Choice value="270" /><Choice value="315" /></Parameter><Parameter name="Duration (s)" inherits_from_parent="1" content_type="2" value="0.1" default_value="0.1" min="0" max="5" tooltip="Transition&apos;s duration in seconds." id="8" /></Box><Box name="Wait" id="6" localization="8" tooltip="Wait a moment before sending a signal on the output. &#x0A;Can be stopped anytime. &#x0A;Stimulating the input again before output is activated restarts the waiting period.&#x0A;" x="307" y="253"><bitmap>media/images/box/wait.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.waiting = None
+
+    def onUnload(self):
+        self.cancelWaiting()
+
+    def triggerOutput(self):
+        self.timerOutput()
+
+    def cancelWaiting(self):
+        if self.waiting:
+            self.waiting.cancel()
+        self.waiting = None
+
+    def onInput_onStart(self):
+        self.cancelWaiting()
+        import qi
+        self.waiting = qi.async(self.triggerOutput, delay=int(self.getParameter("Timeout (s)") * 1000 * 1000))
+
+    def onInput_onStop(self):
+        if self.getParameter("Trigger timerOutput if cancelled") and self.waiting and self.waiting.isRunning():
+            self.timerOutput()
+        self.onUnload()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="1" type_size="1" nature="2" inner="0" tooltip="Start the Wait box with the configured timeout value." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Stop the wait and stimulate the output." id="3" /><Output name="timerOutput" type="1" type_size="1" nature="1" inner="0" tooltip="Send a bang once time set in parameters is elapsed, or if the box is stopped and the appropriate parameter is set." id="4" /><Parameter name="Timeout (s)" inherits_from_parent="0" content_type="2" value="0.05" default_value="1" min="0" max="5000" tooltip="Duration the box waits before stimulating the output." id="5" /><Parameter name="Trigger timerOutput if cancelled" inherits_from_parent="0" content_type="0" value="0" default_value="1" tooltip="If the box is currently waiting and cancelled, output will be stimulated." id="6" /></Box><Link inputowner="16" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="2" indexofinput="2" outputowner="16" indexofoutput="3" /><Link inputowner="16" indexofinput="2" outputowner="6" indexofoutput="4" /><Link inputowner="6" indexofinput="2" outputowner="2" indexofoutput="5" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Box name="Set LEDs (1)" id="7" localization="8" tooltip="Set the intensity of the LEDs of a given group." x="361" y="22"><bitmap>media/images/box/interaction/LED.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        self.leds = ALProxy("ALLeds")
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onSet(self):
+        self.leds.fade(self.getParameter("LEDs group"), self.getParameter("Intensity (%)")/100., self.getParameter("Duration (s)"))
+        self.onReady() # activate output of the box]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onSet" type="1" type_size="1" nature="2" inner="0" tooltip="When this input is stimulated, the intensity of all the LEDs from the group is&#x0A;set to the intensity parameter value." id="2" /><Output name="onReady" type="1" type_size="1" nature="1" inner="0" tooltip="Signal sent when LEDs intensity has been set." id="3" /><Parameter name="LEDs group" inherits_from_parent="0" content_type="3" value="EarLeds" default_value="EarLeds" custom_choice="1" tooltip="The group of LEDs which intensity is to set.&#x0A;&#x0A;Note: You can call the listGroups() method of ALMotion to get the name of LEDs&#x0A;groups which are not listed here." id="4"><Choice value="AllLeds" /><Choice value="BrainLeds" /><Choice value="EarLeds" /><Choice value="FaceLeds" /><Choice value="FeetLeds" /><Choice value="LeftEarLeds" /><Choice value="LeftFaceLeds" /><Choice value="LeftFootLeds" /><Choice value="RightEarLeds" /><Choice value="RightFaceLeds" /><Choice value="RightFootLeds" /></Parameter><Parameter name="Intensity (%)" inherits_from_parent="0" content_type="1" value="100" default_value="100" min="0" max="100" tooltip="Intensity all the LEDs from the group is set to." id="5" /><Parameter name="Duration (s)" inherits_from_parent="0" content_type="2" value="1" default_value="1" min="0" max="60" tooltip="How much time to go to the max/min intensity in seconds." id="6" /></Box><Box name="If" id="8" localization="8" tooltip="Test a condition and stimulate the then or else outputs depending on the boolean&#x0A;value of the condition.&#x0A;The condition can be set in parameters." x="167" y="38"><bitmap>media/images/box/box-diagram.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self, False)
+
+    def onLoad(self):
+        #~ puts code for box initialization here
+        pass
+
+    def onUnload(self):
+        #~ puts code for box cleanup here
+        pass
+
+    def onInput_onData(self, p):
+        param = self.getParameter("Value to compare")
+        try:
+            p = float(p)
+            param = float(param)
+        except:
+            p = str(p)
+            param = str(param)
+        operator = self.getParameter("Condition operator")
+        if( operator == "<" ):
+            self.outputTrueOrFalse( p < param )
+        elif( operator == "< or =" ):
+            self.outputTrueOrFalse( p <= param )
+        elif( operator == "=" ):
+            self.outputTrueOrFalse( p == param )
+        elif( operator == "> or =" ):
+            self.outputTrueOrFalse( p >= param )
+        elif( operator == ">" ):
+            self.outputTrueOrFalse( p > param )
+        elif( operator == "≠" ):
+            self.outputTrueOrFalse( p != param )
+        else:
+            raise Exception( "Operator not known: " + str(operator) )
+
+    def outputTrueOrFalse(self, condition):
+        if( condition ):
+            self.output_then()
+        else:
+            self.output_else()]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onData" type="0" type_size="1" nature="1" inner="0" tooltip="The data to test." id="2" /><Output name="output_then" type="1" type_size="1" nature="2" inner="0" tooltip="Signal sent if the condition is true." id="3" /><Output name="output_else" type="1" type_size="1" nature="2" inner="0" tooltip="Signal sent if the condition is false." id="4" /><Parameter name="Condition operator" inherits_from_parent="0" content_type="3" value="≠" default_value="≠" custom_choice="0" tooltip='Choose the condition operator.&#x0A;&#x0A;For example:&#x0A;If you choose &quot;&gt; or =&quot;, the condition will be: is the input is higher or equal&#x0A;than the parameter?' id="5"><Choice value="&lt;" /><Choice value="&lt; or =" /><Choice value="=" /><Choice value="&gt; or =" /><Choice value="&gt;" /><Choice value="≠" /></Parameter><Parameter name="Value to compare" inherits_from_parent="0" content_type="3" value='&quot;off&quot;' default_value="0" custom_choice="0" tooltip="This is the value which is compared to the input value." id="6" /></Box><Link inputowner="9" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="6" indexofinput="2" outputowner="9" indexofoutput="4" /><Link inputowner="1" indexofinput="2" outputowner="9" indexofoutput="3" /><Link inputowner="15" indexofinput="2" outputowner="9" indexofoutput="5" /><Link inputowner="3" indexofinput="2" outputowner="9" indexofoutput="7" /><Link inputowner="5" indexofinput="2" outputowner="4" indexofoutput="3" /><Link inputowner="4" indexofinput="2" outputowner="9" indexofoutput="6" /><Link inputowner="2" indexofinput="2" outputowner="9" indexofoutput="8" /><Link inputowner="8" indexofinput="2" outputowner="0" indexofoutput="2" /><Link inputowner="7" indexofinput="2" outputowner="8" indexofoutput="3" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box><Box name="Raise Event" id="2" localization="8" tooltip="Stores in NAOqi&apos;s shared memory the given value at the given key, and spreads the event to all its subscribers." x="532" y="171"><bitmap>media/images/box/sensors/STM.png</bitmap><script language="4"><content><![CDATA[class MyClass(GeneratedClass):
+    def __init__(self):
+        GeneratedClass.__init__(self)
+        pass
+
+    def onLoad(self):
+        self.memory = ALProxy("ALMemory")
+
+    def onUnload(self):
+        self.memory = None
+
+    def onInput_onStart(self, p):
+        self.memory.raiseEvent(self.getParameter("key"), p)
+        self.onStopped(p)
+
+    def onInput_onStop(self):
+        self.onUnload() #~ it is recommended to call onUnload of this box in a onStop method, as the code written in onUnload is used to stop the box as well
+        pass]]></content></script><Input name="onLoad" type="1" type_size="1" nature="0" inner="1" tooltip="Signal sent when diagram is loaded." id="1" /><Input name="onStart" type="0" type_size="1" nature="2" inner="0" tooltip="Receives the value to be inserted as an event in ALMemory." id="2" /><Input name="onStop" type="1" type_size="1" nature="3" inner="0" tooltip="Box behavior stops when a signal is received on this input." id="3" /><Output name="onStopped" type="0" type_size="1" nature="1" inner="0" tooltip="Signal sent when box behavior is finished. It contains the inserted value in ALMemory." id="4" /><Output name="onError" type="3" type_size="1" nature="1" inner="0" tooltip="Output when error is raised by the behavior. Contains the error message." id="5" /><Parameter name="key" inherits_from_parent="0" content_type="3" value="eyes" default_value="MyApplication/MyData" custom_choice="0" tooltip="" id="6" /></Box><Link inputowner="4" indexofinput="3" outputowner="8" indexofoutput="4" /><Link inputowner="8" indexofinput="2" outputowner="4" indexofoutput="4" /><Link inputowner="4" indexofinput="2" outputowner="0" indexofoutput="4" /><Link inputowner="8" indexofinput="3" outputowner="0" indexofoutput="4" /></Diagram></BehaviorKeyframe></BehaviorLayer></Timeline></Box></ChoregrapheProject>

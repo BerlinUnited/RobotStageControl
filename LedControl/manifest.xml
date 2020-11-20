@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package version="1.1.0" uuid="ledcontrol-v-1-1">
+ <names>
+  <name lang="en_US">LedControl-v1.1</name>
+ </names>
+ <descriptionLanguages>
+  <language>en_US</language>
+ </descriptionLanguages>
+ <contents>
+  <behaviorContent path="ledControl">
+   <userRequestable/>
+   <nature>interactive</nature>
+   <permissions/>
+  </behaviorContent>
+ </contents>
+</package>
