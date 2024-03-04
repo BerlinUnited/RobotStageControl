@@ -15,151 +15,151 @@
     <!--<link rel="stylesheet" href="./lib/bootstrap-3.4.1/css/bootstrap-theme.min.css" > -->
     
     <!-- Optional Bootstrap Theme -->
-  </head>
-
-  <script>
-    // hack:
-    var last_behavior = '';
   
-    function init() {
-      // getLoadedBehaviors
-      // getDefaultBehaviors
-      // getInstalledBehaviors
-      send("ALBehaviorManager", ["getInstalledBehaviors"], function(data) {
-        var s = "{'data':" + data + "}";
-        const searchRegExp = new RegExp("'", 'g');
-        s = s.replace(searchRegExp,"\"");
-        console.log(s);
-        var obj = JSON.parse(s);
-        console.log(obj);
-        
-        var animations = $("#animations")
-        var behaviors = $("#behaviors")
-        for(a of obj['data']) {
-          var item = '<li class="list-group-item"><a class="btn btn-default" href="#" onclick="behavior(\'' + a + '\'); return false"><span class="glyphicon glyphicon-play"></span> ' + a +'</a></li>';
-          if(a.startsWith('animations')) {
-            animations.append(item)
-          } else if (
-            a.startsWith("tablet_zodiac_app") || 
-            a.endsWith("_scene/behavior_1")
-          ) {
-            behaviors.append(item)
-          }
-        }
-      });
-    }
+    <script>
+      // hack:
+      var last_behavior = '';
     
-    function listening_mode(state) { send("ALListeningMovement", ["setEnabled", state]); }
-    function auto_life(state) { send("ALAutonomousLife", ["setState", state]); }
-    function auto_mode(mode) { send("ALBasicAwareness", ["setTrackingMode", mode]); }
-    
-    // runBehavior
-    function behavior(path) { 
-      behavior_stop(last_behavior);
-      send("ALBehaviorManager", ["startBehavior", path]); 
-      last_behavior = path; 
-    }
-    
-    function behavior_stop(path) { 
-      if(path == null) {
-        path = last_behavior;
-      }
-      send("ALBehaviorManager", ["stopBehavior", path]); 
-    }
-    
-    // say
-    // NOTE: pCall - is an asynchroneous (non blocking) call
-    function say(message) { send("ALTextToSpeech", ["pCall", "say", message]); }
-    function say_animated(message) { send("ALAnimatedSpeech", ["pCall", "say", message, "{\"speakingMovementMode\":contextual}"]); }
-    function say_stop(message) { send("ALTextToSpeech", ["stopAll"]); }
-    
-    function send(proxy, call, handler) {
-      var xhr = new XMLHttpRequest();
-
-      var data = JSON.stringify({
-        "service": proxy,
-        "call": call,
-        "sync": true
-      });
-      console.log(data);
-      
-      xhr.open("POST", "naoqi", true);
-      
-      xhr.onload = function (e) {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            console.log(xhr.responseText);
-            
-            if(typeof handler !== "undefined") {
-              handler(xhr.responseText);
+      function init() {
+        // getLoadedBehaviors
+        // getDefaultBehaviors
+        // getInstalledBehaviors
+        send("ALBehaviorManager", ["getInstalledBehaviors"], function(data) {
+          var s = "{'data':" + data + "}";
+          const searchRegExp = new RegExp("'", 'g');
+          s = s.replace(searchRegExp,"\"");
+          console.log(s);
+          var obj = JSON.parse(s);
+          console.log(obj);
+          
+          var animations = $("#animations")
+          var behaviors = $("#behaviors")
+          for(a of obj['data']) {
+            var item = '<li class="list-group-item"><a class="btn btn-default" href="#" onclick="behavior(\'' + a + '\'); return false"><span class="glyphicon glyphicon-play"></span> ' + a +'</a></li>';
+            if(a.startsWith('animations')) {
+              animations.append(item)
+            } else if (
+              a.startsWith("tablet_zodiac_app") || 
+              a.endsWith("_scene/behavior_1")
+            ) {
+              behaviors.append(item)
             }
-          } else {
-            console.error(xhr.statusText);
           }
+        });
+      }
+      
+      function listening_mode(state) { send("ALListeningMovement", ["setEnabled", state]); }
+      function auto_life(state) { send("ALAutonomousLife", ["setState", state]); }
+      function auto_mode(mode) { send("ALBasicAwareness", ["setTrackingMode", mode]); }
+      
+      // runBehavior
+      function behavior(path) { 
+        behavior_stop(last_behavior);
+        send("ALBehaviorManager", ["startBehavior", path]); 
+        last_behavior = path; 
+      }
+      
+      function behavior_stop(path) { 
+        if(path == null) {
+          path = last_behavior;
         }
-      };
+        send("ALBehaviorManager", ["stopBehavior", path]); 
+      }
       
-      xhr.onerror = function (e) {
-        console.error(xhr.statusText);
-      };
+      // say
+      // NOTE: pCall - is an asynchroneous (non blocking) call
+      function show_text(message) {send("ALMemory", ["pCall", "raiseEvent", "show_text", message]);}
+      function say(message) { show_text(message); send("ALTextToSpeech", ["pCall", "say", message]); }
+      function say_animated(message) { send("ALAnimatedSpeech", ["pCall", "say", message, "{\"speakingMovementMode\":contextual}"]); }
+      function say_stop(message) { send("ALTextToSpeech", ["stopAll"]); }
       
-      xhr.setRequestHeader("Content-Type", "application/json");
-      xhr.send(data);
+      function send(proxy, call, handler) {
+        var xhr = new XMLHttpRequest();
+
+        var data = JSON.stringify({
+          "service": proxy,
+          "call": call,
+          "sync": true
+        });
+        console.log(data);
+        
+        xhr.open("POST", "naoqi", true);
+        
+        xhr.onload = function (e) {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              console.log(xhr.responseText);
+              
+              if(typeof handler !== "undefined") {
+                handler(xhr.responseText);
+              }
+            } else {
+              console.error(xhr.statusText);
+            }
+          }
+        };
+        
+        xhr.onerror = function (e) {
+          console.error(xhr.statusText);
+        };
+        
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+        
+      }
       
-    }
-    
-    document.addEventListener('keydown', doKeyDown, true);
+      document.addEventListener('keydown', doKeyDown, true);
 
 
-    var x = 0;
-    var y = 0;
-    var r = 0;
-      
-    function doKeyDown(e)
-    {
-			if (e.keyCode == 87) {
-				console.log("up");
-        x += 1;
-			}
+      var x = 0;
+      var y = 0;
+      var r = 0;
+        
+      function doKeyDown(e)
+      {
+        if (e.keyCode == 87) {
+          console.log("up");
+          x += 1;
+        }
 
-			if (e.keyCode == 83) {
-				console.log("down");
-        x -= 1;
-			}
+        if (e.keyCode == 83) {
+          console.log("down");
+          x -= 1;
+        }
 
-			if (e.keyCode == 65) {
-				console.log("left");
-        y += 1;
-			}
+        if (e.keyCode == 65) {
+          console.log("left");
+          y += 1;
+        }
 
-			if (e.keyCode == 68) {
-				console.log("right");
-        y -= 1;
-			}
-      
+        if (e.keyCode == 68) {
+          console.log("right");
+          y -= 1;
+        }
+        
 
-      var c = document.getElementById("canvas");
-      var ctx = c.getContext("2d");
-      
-      var cx = c.width / 2;
-      var cy = c.height / 2;
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.beginPath();
-      ctx.arc(cx-y, cy-x, 40, 0, 2 * Math.PI);
-      ctx.stroke();
-      
-      ctx.moveTo(cx-y, cy-x);
-      ctx.lineTo(cx-y+Math.sin(r)*100, cy-x-Math.cos(r)*100);
-      ctx.stroke();
-      
-		}
-    
+        var c = document.getElementById("canvas");
+        var ctx = c.getContext("2d");
+        
+        var cx = c.width / 2;
+        var cy = c.height / 2;
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.beginPath();
+        ctx.arc(cx-y, cy-x, 40, 0, 2 * Math.PI);
+        ctx.stroke();
+        
+        ctx.moveTo(cx-y, cy-x);
+        ctx.lineTo(cx-y+Math.sin(r)*100, cy-x-Math.cos(r)*100);
+        ctx.stroke();
+        
+      }
     </script>
     
     <style>
     </style>
+  </head>
   
   <body onload="init()">
 
