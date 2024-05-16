@@ -18,7 +18,7 @@ A universal liteweight web based interface to control the behavior of a Pepper r
 1. open your favorite browser
 2. open the address
    ```
-   http//<robot.ip>:8000/test.html
+   http://<robot.ip>:8000/test.html
    ```
 3. enter some text in the box and press "say" or "animated say"
 4. the robot now says the text and displays it on its chest
