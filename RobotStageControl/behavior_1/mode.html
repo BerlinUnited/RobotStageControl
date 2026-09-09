@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link rel="canonical" href=".">
+
+    <title>Interactive Mode</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="./lib/bootstrap-3.4.1/css/bootstrap.min.css" >
+    <!--<link rel="stylesheet" href="./lib/bootstrap-3.4.1/css/bootstrap-theme.min.css" > -->
+    
+    <!-- Optional Bootstrap Theme -->
+  
+    <script>
+      function set_mode(mode) { send("ALMemory", ["raiseEvent", "scioi_mode", mode]); }
+      
+      function send(proxy, call, handler) {
+        var xhr = new XMLHttpRequest();
+
+        var data = JSON.stringify({
+          "service": proxy,
+          "call": call,
+          "sync": true
+        });
+        console.log(data);
+        
+        xhr.open("POST", "naoqi", true);
+        
+        xhr.onload = function (e) {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              console.log(xhr.responseText);
+              
+              if(typeof handler !== "undefined") {
+                handler(xhr.responseText);
+              }
+            } else {
+              console.error(xhr.statusText);
+            }
+          }
+        };
+        
+        xhr.onerror = function (e) {
+          console.error(xhr.statusText);
+        };
+        
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+      }  
+    </script>
+  </head>
+  
+  <body>
+
+    <div class="container-fluid">
+      <div class="row">
+      
+      <!-- (animated) say -->
+      <div class="col-md-6">
+        <a class="btn btn-success" href="#" role="button" onclick="set_mode('static'); return false">
+          Static
+        </a>
+        <a class="btn btn-warning" href="#" role="button" onclick="set_mode('active'); return false">
+          Active
+        </a>
+        <a class="btn btn-danger" href="#" role="button" onclick="set_mode('interactive'); return false">
+          Interactive
+        </a>
+      </div>
+      
+      </div><!-- /.row -->
+    </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./lib/jquery-3.5.1.slim.min.js"></script>
+    <!--<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>-->
+    <script src="./lib/bootstrap-3.4.1/js/bootstrap.min.js"></script>
+  </body>
+</html>

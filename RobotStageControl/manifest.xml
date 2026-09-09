@@ -1,10 +1,15 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<package uuid="remote-server-v-1-5" version="1.5.0">
+<package version="1.6.0" uuid="remote-server-v-1-6">
  <names>
-  <name lang="en_US">RemoteServer-V1.5</name>
+  <name lang="en_US">RemoteServer-V1.6</name>
  </names>
+ <supportedLanguages>
+  <language>en_US</language>
+  <language>de_DE</language>
+ </supportedLanguages>
  <descriptionLanguages>
   <language>en_US</language>
+  <language>de_DE</language>
  </descriptionLanguages>
  <contents>
   <behaviorContent path="behavior_1">

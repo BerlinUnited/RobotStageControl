@@ -14,13 +14,32 @@
     <link rel="stylesheet" href="./lib/bootstrap-3.4.1/css/bootstrap.min.css" >
     <!--<link rel="stylesheet" href="./lib/bootstrap-3.4.1/css/bootstrap-theme.min.css" > -->
     
-    <!-- Optional Bootstrap Theme -->
+    <script src="lib/JoystickController/JoystickController.js"></script>
+    
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="./lib/jquery-3.5.1.slim.min.js"></script>
   
     <script>
       // hack:
       var last_behavior = '';
     
-      function init() {
+      function init() 
+      {
+        // init move control
+        // experimental: install key control
+        //$("#keycontrol").click( (e) => {enableKeyControl(e);} );
+        
+        //manually enable key control
+        window.addEventListener('keydown', doKeyDown, false);
+        window.addEventListener('keyup', doKeyUp, false);
+        keyControlTimer = setInterval(processMove, 100);
+      
+        // show motion config
+        send("ALMotion", ["getMoveConfig", "Min"]    , (result)=>console.log("[MoveConfig:Min]     = " + result) );
+        send("ALMotion", ["getMoveConfig", "Max"]    , (result)=>console.log("[MoveConfig:Max]     = " + result) );
+        send("ALMotion", ["getMoveConfig", "Default"], (result)=>console.log("[MoveConfig:Default] = " + result) );
+      
+      
         // getLoadedBehaviors
         // getDefaultBehaviors
         // getInstalledBehaviors
@@ -108,8 +127,11 @@
         
       }
       
+      
+      /* 
+      // Experiment
+      
       document.addEventListener('keydown', doKeyDown, true);
-
 
       var x = 0;
       var y = 0;
@@ -153,11 +175,250 @@
         ctx.moveTo(cx-y, cy-x);
         ctx.lineTo(cx-y+Math.sin(r)*100, cy-x-Math.cos(r)*100);
         ctx.stroke();
-        
       }
+      */
+      
     </script>
     
+    
+    <script>
+    // watch when the key down was requested last 
+    // key-up events get lost sometimes
+    //var last_keydown_time;
+    var key_names = {
+      37: "left",
+      38: "up",
+      39: "right",
+      40: "down",
+      65: "l", // a
+      68: "r" // d
+    };
+    
+    // initialize the states
+    var key_state = {};
+    for(k in key_names) {
+      key_state[key_names[k]] = 0;
+    }
+    
+    // speed configs
+    var speedForward  = 1.0;
+    var speedBackward = 1.0;
+    var speedStrave   = 1.0;
+    var speedTurn     = 1.0;
+    
+    /*
+    var motionConfigDefault = [
+      ['MaxVelXY', 0.3499999940395355], 
+      ['MaxVelTheta', 1.0], 
+      ['MaxAccXY', 0.30000001192092896], 
+      ['MaxAccTheta', 0.75], 
+      ['MaxJerkXY', 1.0], 
+      ['MaxJerkTheta', 2.0], 
+      ['TorsoWy', 0.0]
+    ];*/
+    
+    /*
+    // max settings:
+    var motionConfigMax = [
+      ['MaxVelXY', 0.550000011920929], 
+      ['MaxVelTheta', 2.0], 
+      ['MaxAccXY', 0.550000011920929], 
+      ['MaxAccTheta', 3.0], 
+      ['MaxJerkXY', 5.0], 
+      ['MaxJerkTheta', 50.0], 
+      ['TorsoWy', 0.1745329201221466]
+    ];
+    
+    // min settings on pepper
+    var motionConfigMin = [
+      ['MaxVelXY', 0.10000000149011612], 
+      ['MaxVelTheta', 0.20000000298023224], 
+      ['MaxAccXY', 0.10000000149011612], 
+      ['MaxAccTheta', 0.10000000149011612], 
+      ['MaxJerkXY', 0.20000000298023224], 
+      ['MaxJerkTheta', 0.20000000298023224], 
+      ['TorsoWy', -0.1745329201221466]
+    ]
+    */
+    
+    var motionConfig = {
+      "speed_slow"   : [ ['MaxVelXY', 0.2], ['MaxVelTheta', 0.4], ['MaxAccXY', 0.35], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', -0.1  ] ],
+      "speed_normal" : [ ['MaxVelXY', 0.3], ['MaxVelTheta', 0.6], ['MaxAccXY', 0.45], ['MaxAccTheta', 2.0], ['MaxJerkXY', 4.0], ['MaxJerkTheta', 30.0], ['TorsoWy', 0.0  ] ],
+      "speed_fast"   : [ ['MaxVelXY', 0.4], ['MaxVelTheta', 1.0], ['MaxAccXY', 0.55], ['MaxAccTheta', 3.0], ['MaxJerkXY', 5.0], ['MaxJerkTheta', 50.0], ['TorsoWy', 0.174] ]
+    };
+      
+
+    function doKeyDown(e)
+    {
+      if (e.keyCode == 87) { // w - fast
+        $("input[name='move_speed']").filter('[value=speed_fast]').prop('checked', true);
+        console.log("fast");
+        e.preventDefault();
+      } else if (e.keyCode == 83) { // s - slow
+        $("input[name='move_speed']").filter('[value=speed_slow]').prop('checked', true);
+        console.log("slow");
+        e.preventDefault();
+      }
+    
+      if(e.keyCode in key_names) { 
+        var name = key_names[e.keyCode]; 
+        key_state[name] = 1;  
+        //last_keydown_time = +new Date(); 
+        
+        e.preventDefault();
+      }
+		}
+    
+    function doKeyUp(e)
+    {
+      if (e.keyCode == 87) { // w - fast
+        $("input[name='move_speed']").filter('[value=speed_normal]').prop('checked', true);
+        e.preventDefault();
+      } else if (e.keyCode == 83) { // s - slow
+        $("input[name='move_speed']").filter('[value=speed_normal]').prop('checked', true);
+        e.preventDefault();
+      }
+    
+      if( e.keyCode in key_names) { 
+        var name = key_names[e.keyCode]; 
+        key_state[name] = 0;
+      }
+		}
+    
+    var moveState = 0;
+    var lastMoveState = 0;
+    var timeStampLastMoveCommand = 0;
+    var lastCommandDone = true;
+    
+    function getConfig() {
+      var selected_speed = $("input[name='move_speed']:checked").val();
+      console.log(selected_speed);
+      return motionConfig[selected_speed];
+    }
+    
+    function sendMotionCommand() {
+      var move_x = key_state["up"]   * speedForward - key_state["down"]  * speedBackward;
+      var move_y = key_state["l"]    * speedStrave  - key_state["r"]     * speedStrave;
+      var move_r = key_state["left"] * speedTurn    - key_state["right"] * speedTurn;
+      
+      lastCommandDone = false;
+      send("ALMotion", ["moveToward", move_x, move_y, move_r, getConfig()], (e) => {lastCommandDone=true;} );
+      showKeyState();
+    }
+    
+    function getTime() {
+      return performance.now();
+    }
+    
+    function processMove() {
+      // note: the states have to be global
+      lastMoveState = moveState;
+      // calculate a unique key state
+      moveState = 0;
+      var shift = 1;
+      for(key in key_state) {
+        moveState = moveState | shift*key_state[key];
+        shift *= 2;
+      }
+      //console.log(moveState);
+      
+      // check if the keys are dead => reset all keys
+      // doesn't really work
+      /*
+      var now = +new Date();
+      if(moveState > 0 && now > last_keydown_time + 1000) {
+        console.warn("some keys are dead. reset all key states");
+        for(key in key_state) {
+          key_state[key] = 0;
+        }
+        moveState = 0;
+      }
+      */
+      
+      var resendDelay = 600;
+      if( (moveState != lastMoveState) || // send on change
+          (moveState > 0 && getTime() > timeStampLastMoveCommand + resendDelay)) // resend
+      {
+        timeStampLastMoveCommand = getTime();
+        sendMotionCommand();
+      }
+      
+      /*
+      if(moveState > 0 && moveState != lastMoveState) {
+        //console.log([left, right, up, down, l, r]);
+        sendMotionCommand();
+      } else if(lastMoveState > 0) {
+        // stop
+        //console.log([left, right, up, down, l, r]);
+        sendMotionCommand();
+      }
+      */
+    }
+    
+    function showKeyState() {
+      for(key in key_state) {
+        var button = $("#key_" + key);
+        button.removeClass(key_state[key] > 0?"btn-default":"btn-primary");
+        button.addClass(key_state[key] > 0?"btn-primary":"btn-default");
+      }
+    }
+    
+    var keyControlTimer;
+    
+    function enableKeyControl(e) 
+    {
+      window.addEventListener('keydown', doKeyDown, false);
+      window.addEventListener('keyup', doKeyUp, false);
+    
+      var button = $(e.target);
+      button.addClass("btn-danger");
+      button.removeClass("btn-primary");
+      button.text("Key Control On");
+      button.click( (e) => {disableKeyControl(e);} );
+      
+      keyControlTimer = setInterval(processMove, 100);
+      
+      for(key in key_state) {
+        $("#key_" + key).removeClass("disabled");
+      }
+    }
+    
+    function disableKeyControl(e) 
+    {
+      window.removeEventListener('keydown', doKeyDown, false);
+      window.removeEventListener('keyup', doKeyUp, false);
+      
+      clearInterval(keyControlTimer);
+      
+      var button = $(e.target);
+      button.removeClass("btn-danger");
+      button.addClass("btn-primary");
+      button.text("Key Control Off");
+      button.click( (e) => {enableKeyControl(e);} );
+      
+      // disable buttons
+      for(key in key_state) {
+        $("#key_" + key).addClass("disabled");
+      }
+    }
+    
+    
+    // feature in progress: make sure we have a good connection
+    var timePingSent = 0;
+    function sendPing() {
+      timePingSent = getTime();
+      send("ALMemory", ["ping"], (e) => { console.log(e); console.log(getTime()-timePingSent); });
+    }
+    //setInterval(sendPing, 1000);
+    </script>
+    
+    
     <style>
+      .arrowkey {
+        font-size: 2em;
+        font-weight: bold;
+        width: 2em;
+      }
     </style>
   </head>
   
@@ -208,6 +469,9 @@
             <li><a href="#" onclick="auto_mode('MoveContextually'); say('MoveContextually'); return false">MoveContextually</a></li>
             <li><a href="#" onclick="auto_mode('BodyRotation'); say('BodyRotation'); return false">BodyRotation</a></li>
             <li><a href="#" onclick="auto_mode('Head'); say('Head'); return false">Head</a></li>
+            
+            <li><a href="#" onclick='send("ALMotion", ["setExternalCollisionProtectionEnabled","All", 1]); return false'>Safety On</a></li>
+            <li><a href="#" onclick='send("ALMotion", ["setExternalCollisionProtectionEnabled","All", 0]); return false'>Safety Off</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
@@ -271,6 +535,46 @@
             <p><a id="behaviors_stop" class="btn btn-danger" href="#" role="button" onclick="behavior_stop(); return false">
               <span class="glyphicon glyphicon-stop" aria-hidden="true"></span> STOP LAST BEHAVIOR
             </a></p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Move -->
+      <div class="col-md-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <span>Move</span>
+            <span>
+              <span>Speed: </span>
+              <label class="radio-inline">
+                <input type="radio" name="move_speed" id="move_slow" value="speed_slow"> slow
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="move_speed" id="move_normal" value="speed_normal"> normal
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="move_speed" id="move_fast" value="speed_fast" checked="checked"> fast
+              </label>
+            </span>
+          </div>
+          <div class="panel-body">
+            
+            <a id="key_l" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#8630;</a>
+            <a id="key_up" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#11014;</a>
+            <a id="key_r" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#8631;</a>
+            <br/>
+            <a id="key_left" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#11013;</a>
+            <a id="key_down" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#11015;</a>
+            <a id="key_right" class="btn btn-default arrowkey disabled" href="#" role="button" onclick="return false">&#10145;</a>
+            
+            <!--<div id="status1">Joystick: </div>
+            <div style="border: 0px solid red; width: 128px; position: fixed; bottom: 50px; right: 50px;">
+              <img src="lib/JoystickController/images/joystick-base.png"/>
+              <div id="stick1" style="position: absolute; left:32px; top:32px;">
+                <img src="lib/JoystickController/images/joystick-red.png"/>		
+              </div>
+            </div>
+            -->
           </div>
         </div>
       </div>

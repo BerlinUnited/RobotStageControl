@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flash Server</title>
+
+  <script src="text.js"></script>
+  <script src="./lib/jquery-3.5.1.slim.min.js"></script>
+    
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background-color: #fff;
+      color: #000;
+      font-size: 1.7rem;
+      font-family: sans-serif;
+    }
+
+    body {
+    }
+    
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #000; /* or any color you like */
+      color: #fff;
+      padding: 1rem;
+      font-size: 1.5rem;
+      text-align: center;
+      z-index: 1000;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .wrapper {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6rem 2rem 2rem 2rem; /* top padding to avoid overlap with header */
+      box-sizing: border-box;
+      overflow-y: auto; /* allow scroll when needed */
+    }
+
+    .text {
+      width: 100%;
+      text-align: center;
+    }
+  </style>
+  
+  <script>
+    function darkenHexColor(hex, percent) {
+      // Expand shorthand (#fff → #ffffff)
+      if (hex.length === 4) {
+        var r = hex[1] + hex[1];
+        var g = hex[2] + hex[2];
+        var b = hex[3] + hex[3];
+        hex = "#" + r + g + b;
+      }
+
+      var num = parseInt(hex.slice(1), 16);
+
+      var r = (num >> 16) - ((num >> 16) * percent / 100);
+      var g = ((num >> 8) & 0x00FF) - (((num >> 8) & 0x00FF) * percent / 100);
+      var b = (num & 0x0000FF) - ((num & 0x0000FF) * percent / 100);
+
+      r = Math.max(0, Math.min(255, Math.round(r)));
+      g = Math.max(0, Math.min(255, Math.round(g)));
+      b = Math.max(0, Math.min(255, Math.round(b)));
+
+      function toHex(x) {
+        var hex = x.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      }
+
+      return "#" + toHex(r) + toHex(g) + toHex(b);
+    }
+    
+    function wrapWordsWithSpans(text, prefix) {
+      if (!prefix) prefix = "w";
+
+      var words = text.split(/\s+/);
+      var result = "";
+      for (var i = 0; i < words.length; i++) {
+        result += '<span id="' + prefix + i + '" style="opacity:0">' + words[i] + '</span>';
+        if (i !== words.length - 1) result += ' ';
+      }
+      return result;
+    }
+    
+    function revealWords(count) {
+      var i = 0;
+      var interval = setInterval(function() {
+        var el = document.getElementById("w" + i);
+        if (el) el.style.opacity = 1;
+        i++;
+        if (i >= count) clearInterval(interval);
+      }, 66);
+    }
+
+    function show_message_animtion(msg) {
+      console.log(msg);
+      var html = "<div>" + wrapWordsWithSpans(msg) +  "</div>";
+      
+      var scene = $(html);
+      
+      $("#container").append( scene );
+      
+      var wordCount = msg.split(/\s+/).length;
+      revealWords(wordCount);
+    }
+    
+    function show_message(msg) {
+      console.log(msg);
+      var html = "<div>" + msg +  "</div>";
+      
+      var scene = $(html);
+      
+      $("#container").append( scene );
+      
+      var wordCount = msg.split(/\s+/).length;
+      revealWords(wordCount);
+    }
+    
+    function init() {
+      $('#wrapper').css('background-color', text_data["color"]);
+      $("#header").append( text_data["title"] );
+      $("#header").css('background-color', darkenHexColor(text_data["color"], 70));
+      
+      //text_data["messages"].forEach(show_message);
+      text_data["messages"].forEach(show_message_animtion);
+    }
+  </script>
+</head>
+
+<body onload="init()">
+  <div class="header" id="header"></div>
+  <div class="wrapper" id="wrapper">
+    <div class="text" id="container"></div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidden iframe URL Calls</title>
+    <style>
+        /* Hide the iframe */
+        #hiddenFrame {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Links -->
+    <ul>
+        <li><a href="#" onclick="callUrl('http://10.0.4.166:8000/mode/static.html'); return false;">Static</a></li>
+        <li><a href="#" onclick="callUrl('http://10.0.4.166:8000/mode/active.html'); return false;">Active</a></li>
+        <li><a href="#" onclick="callUrl('http://10.0.4.166:8000/mode/interactive.html'); return false;">Interactive</a></li>
+    </ul>
+
+    <!-- Hidden iframe -->
+    <iframe id="hiddenFrame"></iframe>
+
+    <script>
+        function callUrl(url) {
+            // Set the iframe's src to the target URL
+            const iframe = document.getElementById('hiddenFrame');
+            iframe.src = url;
+
+            console.log(`URL called: ${url}`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      function set_mode(mode) { send("ALMemory", ["raiseEvent", "scioi_mode", mode]); }
+      
+      function send(proxy, call, handler) {
+        var xhr = new XMLHttpRequest();
+
+        var data = JSON.stringify({
+          "service": proxy,
+          "call": call,
+          "sync": true
+        });
+        console.log(data);
+        
+        xhr.open("POST", "naoqi", true);
+        
+        xhr.onload = function (e) {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              console.log(xhr.responseText);
+              
+              if(typeof handler !== "undefined") {
+                handler(xhr.responseText);
+              }
+            } else {
+              console.error(xhr.statusText);
+            }
+          }
+        };
+        
+        xhr.onerror = function (e) {
+          console.error(xhr.statusText);
+        };
+        
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+      }  
+    </script>
+  </head>
+  
+  <body onload="set_mode('static');">
+  </body>
+</html>
