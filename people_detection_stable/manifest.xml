@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package version="0.0.8" uuid="people_detection_stable-c0e1f4">
+ <names>
+  <name lang="en_US">Personenerkennung</name>
+ </names>
+ <supportedLanguages>
+  <language>de_DE</language>
+  <language>en_US</language>
+ </supportedLanguages>
+ <descriptionLanguages>
+  <language>en_US</language>
+  <language>de_DE</language>
+ </descriptionLanguages>
+ <contents>
+  <behaviorContent path="behavior_1">
+   <userRequestable/>
+   <nature>interactive</nature>
+   <permissions/>
+  </behaviorContent>
+ </contents>
+ <requirements>
+  <naoqiRequirement minVersion="2.5"/>
+  <robotRequirement model="JULIETTE"/>
+ </requirements>
+</package>
